@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "zyu0sjMdr4gTIZNG22IutZKUvPQLbGWkVF7PGqS/5F9ThWoHiAPRJOdek3PT+Zuh1FJJHFoflQfWKtyrOHfiNA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\milky\\Desktop\\RestaurantApp\\RestaurantApp\\RestaurantApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\milky\\.nuget\\packages\\microsoft.netcore.app.ref\\7.0.14\\microsoft.netcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\milky\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\7.0.14\\microsoft.windowsdesktop.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\milky\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\7.0.14\\microsoft.aspnetcore.app.ref.7.0.14.nupkg.sha512",
+    "C:\\Users\\milky\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\7.0.14\\microsoft.netcore.app.host.win-x64.7.0.14.nupkg.sha512"
+  ],
+  "logs": []
+}

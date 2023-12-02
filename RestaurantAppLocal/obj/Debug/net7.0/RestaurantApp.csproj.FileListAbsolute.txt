@@ -1,0 +1,14 @@
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\bin\Debug\net7.0\RestaurantApp.exe
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\bin\Debug\net7.0\RestaurantApp.deps.json
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\bin\Debug\net7.0\RestaurantApp.runtimeconfig.json
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\bin\Debug\net7.0\RestaurantApp.dll
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\bin\Debug\net7.0\RestaurantApp.pdb
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.AssemblyInfoInputs.cache
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.AssemblyInfo.cs
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.csproj.CoreCompileInputs.cache
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.dll
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\refint\RestaurantApp.dll
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.pdb
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\RestaurantApp.genruntimeconfig.cache
+C:\Users\milky\Desktop\RestaurantApp\RestaurantApp\obj\Debug\net7.0\ref\RestaurantApp.dll
