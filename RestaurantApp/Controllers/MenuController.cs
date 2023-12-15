@@ -3,24 +3,43 @@ using System.Net;
 using System.Text.Json;
 using Dapper;
 
+
 public class MenuController : ControllerBase
 {
-    private const string ConnectionString = "Server=localhost;Database=RestaurantAppDb;Integrated Security=SSPI";
 
+    private async Task HandleError(HttpListenerContext context, string errorMessage, HttpStatusCode statusCode)
+    {
+        context.Response.StatusCode = (int)statusCode;
+        using var writer = new StreamWriter(context.Response.OutputStream);
+        await writer.WriteLineAsync(errorMessage);
+    }
+
+
+    private const string ConnectionString = "Server=localhost;Database=RestaurantAppDb;Integrated Security=SSPI";
+    private readonly SqlConnection connection = new SqlConnection(ConnectionString);
     [HttpGet("GetAll")]
     // http://localhost:8080/menu/getall
     public async Task GetMenuItemsAsync(HttpListenerContext context)
     {
         using var writer = new StreamWriter(context.Response.OutputStream);
 
-        using var connection = new SqlConnection(ConnectionString);
-        var menuItems = await connection.QueryAsync<MenuItem>("select * from Menu");
+        try
+        {
+            using (connection)
+            {
+                var menuItems = await connection.QueryAsync<MenuItem>("select * from Menu");
 
-        var menuItemsHtml = menuItems.GetHtml();
-        await writer.WriteLineAsync(menuItemsHtml);
-        context.Response.ContentType = "text/html";
+                var menuItemsHtml = menuItems.GetHtml();
+                await writer.WriteLineAsync(menuItemsHtml);
+                context.Response.ContentType = "text/html";
 
-        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
+            }
+        }
+        catch (Exception)
+        {
+            await HandleError(context, "An error occurred while processing the request.", HttpStatusCode.InternalServerError);
+        }
     }
 
     [HttpGet("GetById")]
@@ -31,30 +50,34 @@ public class MenuController : ControllerBase
 
         if (menuItemIdToGetObj == null || int.TryParse(menuItemIdToGetObj, out int menuItemIdToGet) == false)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await HandleError(context, "Bad request. Invalid or missing 'id' parameter.", HttpStatusCode.BadRequest);
             return;
         }
 
-        using var connection = new SqlConnection(ConnectionString);
-        var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
-            sql: "select top 1 * from Menu where Id = @Id",
-            param: new { Id = menuItemIdToGet });
-
-        if (menuItem is null)
+        using (connection)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            return;
+            var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
+       sql: "select top 1 * from Menu where Id = @Id",
+       param: new { Id = menuItemIdToGet });
+
+            using var writer = new StreamWriter(context.Response.OutputStream);
+            if (menuItem is null)
+            {
+                await HandleError(context, "The product you are trying to get does not exist.", HttpStatusCode.NotFound);
+                return;
+            }
+
+            await writer.WriteLineAsync(JsonSerializer.Serialize(menuItem));
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
         }
 
-        using var writer = new StreamWriter(context.Response.OutputStream);
-        await writer.WriteLineAsync(JsonSerializer.Serialize(menuItem));
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.OK;
     }
 
+
     [HttpPost("Create")]
-    //http://localhost:8080/menu/create
+    //http://localhost:8080/menu/reate
     public async Task CreateMenuItemAsync(HttpListenerContext context)
     {
         using var reader = new StreamReader(context.Request.InputStream);
@@ -64,17 +87,20 @@ public class MenuController : ControllerBase
 
         if (newMenuItem == null || newMenuItem.Price == null || string.IsNullOrWhiteSpace(newMenuItem.Name))
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await HandleError(context, "Product cannot be created.", HttpStatusCode.BadRequest);
             return;
         }
 
-        using var connection = new SqlConnection(ConnectionString);
-        var rowsAffected = await connection.ExecuteAsync(
-            @"INSERT INTO Menu (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
+        using (connection)
+        {
+            var rowsAffected = await connection.ExecuteAsync(
+                @"INSERT INTO Menu (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
               VALUES (@Name, @Description, @Category, @IsVegetarian, @Calories, @ImageURL, @Price)",
-            param: newMenuItem);
+                param: newMenuItem);
 
-        context.Response.StatusCode = (int)HttpStatusCode.Created;
+            context.Response.StatusCode = (int)HttpStatusCode.Created;
+
+        }
     }
 
     [HttpDelete]
@@ -85,23 +111,26 @@ public class MenuController : ControllerBase
 
         if (menuItemIdToDeleteObj == null || int.TryParse(menuItemIdToDeleteObj, out int menuItemIdToDelete) == false)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await HandleError(context, "Bad request. Invalid or missing 'id' parameter.", HttpStatusCode.BadRequest);
             return;
         }
 
-        using var connection = new SqlConnection(ConnectionString);
-        var rowsDeleted = await connection.ExecuteAsync(
-            @"DELETE FROM Menu
-              WHERE Id = @Id",
-            param: new { Id = menuItemIdToDelete });
-
-        if (rowsDeleted == 0)
+        using (connection)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            return;
-        }
+            var rowsDeleted = await connection.ExecuteAsync(
+                @"DELETE FROM Menu
+              WHERE Id = @Id",
+                param: new { Id = menuItemIdToDelete });
 
-        context.Response.StatusCode = (int)HttpStatusCode.OK;
+            if (rowsDeleted == 0)
+            {
+                await HandleError(context, "The product you are trying to delete does not exist.", HttpStatusCode.NotFound);
+                return;
+            }
+
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
+
+        }
     }
 
     [HttpPut]
@@ -112,7 +141,7 @@ public class MenuController : ControllerBase
 
         if (menuItemIdToUpdateObj == null || int.TryParse(menuItemIdToUpdateObj, out int menuItemIdToUpdate) == false)
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await HandleError(context, "Bad request. Invalid or missing 'id' parameter.", HttpStatusCode.BadRequest);
             return;
         }
 
@@ -123,35 +152,38 @@ public class MenuController : ControllerBase
 
         if (menuItemToUpdate == null || menuItemToUpdate.Price == null || string.IsNullOrEmpty(menuItemToUpdate.Name))
         {
-            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await HandleError(context, "The product you are trying to update does not exist.", HttpStatusCode.BadRequest);
             return;
         }
 
-        using var connection = new SqlConnection(ConnectionString);
-        var rowsAffected = await connection.ExecuteAsync(
-            @"UPDATE Menu
+        using (connection)
+        {
+
+            var rowsAffected = await connection.ExecuteAsync(
+                @"UPDATE Menu
               SET Name = @Name, Description = @Description, Category = @Category, 
                   IsVegetarian = @IsVegetarian, Calories = @Calories, 
                   ImageURL = @ImageURL, Price = @Price
               WHERE Id = @Id",
-            param: new
+                param: new
+                {
+                    menuItemToUpdate.Name,
+                    menuItemToUpdate.Description,
+                    menuItemToUpdate.Category,
+                    menuItemToUpdate.IsVegetarian,
+                    menuItemToUpdate.Calories,
+                    menuItemToUpdate.ImageURL,
+                    menuItemToUpdate.Price,
+                    Id = menuItemIdToUpdate
+                });
+
+            if (rowsAffected == 0)
             {
-                menuItemToUpdate.Name,
-                menuItemToUpdate.Description,
-                menuItemToUpdate.Category,
-                menuItemToUpdate.IsVegetarian,
-                menuItemToUpdate.Calories,
-                menuItemToUpdate.ImageURL,
-                menuItemToUpdate.Price,
-                Id = menuItemIdToUpdate
-            });
+                await HandleError(context, "The product you are trying to update does not exist.", HttpStatusCode.NotFound);
+                return;
+            }
 
-        if (rowsAffected == 0)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-            return;
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
         }
-
-        context.Response.StatusCode = (int)HttpStatusCode.OK;
     }
 }

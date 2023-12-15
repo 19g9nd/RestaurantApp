@@ -8,7 +8,7 @@ public class HomeController : ControllerBase
         {
             using var writer = new StreamWriter(context.Response.OutputStream);
 
-            var pageHtml = await File.ReadAllTextAsync("./Views/Home.html");
+            var pageHtml = await File.ReadAllTextAsync("Views/Home.html");
             await writer.WriteLineAsync(pageHtml);
             await writer.FlushAsync();  // Ожидаем чтобы все данные были отправлены
 
