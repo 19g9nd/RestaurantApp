@@ -1,0 +1,23 @@
+@{
+    ViewData["Title"] = "GetAll";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h2>Menu Items</h2>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+     
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+          
+        </tr>
+    }
+</table>
