@@ -1,23 +1,36 @@
+@model List<MenuItem>
+
 @{
-    ViewData["Title"] = "GetAll";
+    ViewData["Title"] = "Menu Items";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <h2>Menu Items</h2>
+    <hr />
 
-<h2>Menu Items</h2>
-
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Description</th>
-     
-    </tr>
-    @foreach (var item in Model)
+    @foreach (var menuItem in Model)
     {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.Description</td>
-          
-        </tr>
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="@menuItem.ImageURL" class="card-img" alt="MenuItem Image">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">@menuItem.Name</h5>
+                        <p class="card-text">@menuItem.Description</p>
+                        <p class="card-text"><strong>Category:</strong> @menuItem.Category</p>
+                        <p class="card-text"><strong>Is Vegetarian:</strong> @menuItem.IsVegetarian</p>
+                        <p class="card-text"><strong>Calories:</strong> @menuItem.Calories</p>
+                        <p class="card-text"><strong>Price:</strong> @menuItem.Price</p>
+                        <a href="#" class="btn btn-primary">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
-</table>
+
+    <div class="form-group">
+        <a asp-action="Create" class="btn btn-success">Add New Item</a>
+    </div>
+</div>

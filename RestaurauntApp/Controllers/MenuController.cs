@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Dapper;
+using RestaurauntApp.DTOS;
 
 namespace RestaurantApp.Controllers
 {
@@ -19,17 +20,16 @@ namespace RestaurantApp.Controllers
 
         public MenuController(){}
 
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetMenuItemsAsync()
+       
+        public async Task<IActionResult> GetAll()
         {
             try
             {
                 using (connection)
                 {
-                    var menuItems = await connection.QueryAsync<MenuItem>("select * from Menu");
-                    var menuItemsHtml = menuItems.GetHtml();
-
-                    return Content(menuItemsHtml, "text/html");
+                       var menuItems = await connection.QueryAsync<MenuItem>("select * from Menu");
+                      
+                    return View(menuItems);
                 }
             }
             catch (Exception)
@@ -73,7 +73,7 @@ namespace RestaurantApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create([FromForm] MenuItem newMenuItem)
+        public async Task<IActionResult> Create([FromForm] MenuItemDTO newMenuItem)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace RestaurantApp.Controllers
 
         [HttpPut("update/{id}")]
     
-        public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItem menuItemToUpdate)
+        public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)
         {
             try
             {
