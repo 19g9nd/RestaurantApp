@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Dapper;
 using RestaurauntApp.DTOS;
+using RestaurauntApp.Repositories;
 
 namespace RestaurantApp.Controllers
 {
@@ -15,10 +16,15 @@ namespace RestaurantApp.Controllers
     public class MenuController : Controller
     {
 
+  private readonly IMenuRepository menuRepository;
         private const string ConnectionString = "Server=localhost;Database=RestaurantAppDb;Integrated Security=SSPI";
         private readonly SqlConnection connection = new SqlConnection(ConnectionString);
 
-        public MenuController(){}
+       public MenuController(IMenuRepository menuRepository)
+    {
+        this.menuRepository = menuRepository;
+    }
+
 
        
         public async Task<IActionResult> GetAll()

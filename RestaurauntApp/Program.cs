@@ -1,8 +1,17 @@
+using Microsoft.Extensions.Configuration;
+using RestaurauntApp.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddControllersWithViews();
 
+
+builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("MenuDb");
+    return new MenuRepository(connectionString);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
