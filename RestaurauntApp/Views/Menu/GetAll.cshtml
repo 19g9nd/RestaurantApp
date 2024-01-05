@@ -20,10 +20,17 @@
                         <h5 class="card-title">@menuItem.Name</h5>
                         <p class="card-text">@menuItem.Description</p>
                         <p class="card-text"><strong>Category:</strong> @menuItem.Category</p>
-                        <p class="card-text"><strong>Is Vegetarian:</strong> @menuItem.IsVegetarian</p>
+                        <p class="card-text">
+                            <strong>Is Vegetarian:</strong> @(menuItem.IsVegetarian.HasValue ? (menuItem.IsVegetarian.Value
+                        ? "✔" : "✘") : "❓")
+                        </p>
+
                         <p class="card-text"><strong>Calories:</strong> @menuItem.Calories</p>
-                        <p class="card-text"><strong>Price:</strong> @menuItem.Price</p>
+                        <p class="card-text"><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
                         <a href="#" class="btn btn-primary">Order Now</a>
+                        <form method="post" asp-action="DeleteMenuItemAsync" asp-route-id="@menuItem.Id" class="d-inline">
+                            <button type="submit" class="btn btn-danger">Delete Item</button>
+                        </form>
                     </div>
                 </div>
             </div>

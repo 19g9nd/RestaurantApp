@@ -16,27 +16,23 @@ namespace RestaurantApp.Controllers
     public class MenuController : Controller
     {
 
-  private readonly IMenuRepository menuRepository;
-        private const string ConnectionString = "Server=localhost;Database=RestaurantAppDb;Integrated Security=SSPI";
-        private readonly SqlConnection connection = new SqlConnection(ConnectionString);
-
-       public MenuController(IMenuRepository menuRepository)
-    {
-        this.menuRepository = menuRepository;
-    }
+        private readonly IMenuRepository menuRepository;
+        public MenuController(IMenuRepository menuRepository)
+        {
+            this.menuRepository = menuRepository;
+        }
 
 
-       
+
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                using (connection)
-                {
-                       var menuItems = await connection.QueryAsync<MenuItem>("select * from Menu");
-                      
+             
+                    var menuItems = await menuRepository.GetAllMenuItemsAsync();
+
                     return View(menuItems);
-                }
+                
             }
             catch (Exception)
             {
@@ -49,19 +45,15 @@ namespace RestaurantApp.Controllers
         {
             try
             {
-                using (connection)
-                {
-                    var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
-                        sql: "select top 1 * from Menu where Id = @Id",
-                        param: new { Id = id });
-
+              
+                    var menuItem = await menuRepository.GetMenuItemByIdAsync(id);
                     if (menuItem == null)
                     {
                         return NotFound("The product you are trying to get does not exist.");
                     }
 
                     return Json(menuItem);
-                }
+                
             }
             catch (Exception)
             {
@@ -72,10 +64,11 @@ namespace RestaurantApp.Controllers
 
 
         [HttpGet]
-    [Route("[action]")]
-    public IActionResult Create() {
-        return View();
-    }
+        [Route("[action]")]
+        public IActionResult Create()
+        {
+            return View();
+        }
 
         [HttpPost]
 
@@ -83,24 +76,17 @@ namespace RestaurantApp.Controllers
         {
             try
             {
-                using (connection)
-                {
-                       var rowsAffected = await connection.ExecuteAsync(
-                @"INSERT INTO Menu (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
-                  VALUES (@Name, @Description, @Category, @IsVegetarian, @Calories, @ImageURL, @Price)",
-                param: newMenuItem);
+                var rowsAffected = await menuRepository.CreateMenuItemAsync(newMenuItem);
 
-            if (rowsAffected > 0)
-            {
-                // Вставка прошла успешно
-                 return RedirectToAction("GetAll");
-            }
-            else
-            {
-                // Вставка не удалась
-                return StatusCode((int)HttpStatusCode.InternalServerError, "Failed to insert the product.");
-            }
-        
+                if (rowsAffected > 0)
+                {
+                    // Вставка прошла успешно
+                    return RedirectToAction("GetAll");
+                }
+                else
+                {
+                    // Вставка не удалась
+                    return StatusCode((int)HttpStatusCode.InternalServerError, "Failed to insert the product.");
                 }
             }
             catch (Exception)
@@ -109,34 +95,29 @@ namespace RestaurantApp.Controllers
             }
         }
 
-        [HttpDelete("delete/{id}")]
-       
-        public async Task<IActionResult> DeleteMenuItemAsync(int id)
+       [HttpDelete("delete/{id}")]
+public async Task<IActionResult> DeleteMenuItemAsync(int id)
+{
+    try
+    {
+        var rowsDeleted = await menuRepository.DeleteMenuItemAsync(id);
+
+        if (rowsDeleted == 0)
         {
-            try
-            {
-                using (connection)
-                {
-                    var rowsDeleted = await connection.ExecuteAsync(
-                        @"DELETE FROM Menu WHERE Id = @Id",
-                        param: new { Id = id });
-
-                    if (rowsDeleted == 0)
-                    {
-                        return NotFound("The product you are trying to delete does not exist.");
-                    }
-
-                    return Ok();
-                }
-            }
-            catch (Exception)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
-            }
+            return NotFound("The product you are trying to delete does not exist.");
         }
+
+        return RedirectToAction("GetAll");
+    }
+    catch (Exception)
+    {
+        return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
+    }
+}
+
 
         [HttpPut("update/{id}")]
-    
+
         public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)
         {
             try
@@ -146,25 +127,8 @@ namespace RestaurantApp.Controllers
                     return BadRequest("The product you are trying to update does not exist.");
                 }
 
-                using (connection)
-                {
-                    var rowsAffected = await connection.ExecuteAsync(
-                        @"UPDATE Menu
-                          SET Name = @Name, Description = @Description, Category = @Category, 
-                              IsVegetarian = @IsVegetarian, Calories = @Calories, 
-                              ImageURL = @ImageURL, Price = @Price
-                          WHERE Id = @Id",
-                        param: new
-                        {
-                            menuItemToUpdate.Name,
-                            menuItemToUpdate.Description,
-                            menuItemToUpdate.Category,
-                            menuItemToUpdate.IsVegetarian,
-                            menuItemToUpdate.Calories,
-                            menuItemToUpdate.ImageURL,
-                            menuItemToUpdate.Price,
-                            Id = id
-                        });
+                
+                    var rowsAffected = await menuRepository.UpdateMenuItemAsync(id,menuItemToUpdate);
 
                     if (rowsAffected == 0)
                     {
@@ -173,7 +137,7 @@ namespace RestaurantApp.Controllers
 
                     return Ok();
                 }
-            }
+            
             catch (Exception)
             {
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
