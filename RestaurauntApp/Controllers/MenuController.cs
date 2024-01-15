@@ -95,8 +95,8 @@ namespace RestaurantApp.Controllers
             }
         }
 
-       [HttpDelete("delete/{id}")]
-public async Task<IActionResult> DeleteMenuItemAsync(int id)
+       [HttpDelete("/api/[controller]")]
+public async Task<IActionResult> DeleteAsync(int id)
 {
     try
     {
