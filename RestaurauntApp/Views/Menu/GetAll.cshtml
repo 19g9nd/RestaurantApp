@@ -1,0 +1,41 @@
+@model List<MenuItem>
+
+@{
+    ViewData["Title"] = "Menu Items";
+}
+
+<div class="container mt-4">
+    <h2>Menu Items</h2>
+    <hr />
+
+    @foreach (var menuItem in Model)
+    {
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <img src="@menuItem.ImageURL" class="card-img" alt="MenuItem Image">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">@menuItem.Name</h5>
+                        <p class="card-text">@menuItem.Description</p>
+                        <p class="card-text"><strong>Category:</strong> @menuItem.Category</p>
+                        <p class="card-text">
+                            <strong>Is Vegetarian:</strong> @(menuItem.IsVegetarian.HasValue ? (menuItem.IsVegetarian.Value
+                        ? "✔" : "✘") : "❓")
+                        </p>
+
+                        <p class="card-text"><strong>Calories:</strong> @menuItem.Calories</p>
+                        <p class="card-text"><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
+                        <a href="#" class="btn btn-primary">Order Now</a>
+                        @* <a asp-action="Delete"  class="btn btn-danger" asp-route-id="@menuItem.Id">Delete Item</a> *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="form-group">
+        <a asp-action="Create" class="btn btn-success">Add New Item</a>
+    </div>
+</div>
