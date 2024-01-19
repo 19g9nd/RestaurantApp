@@ -41,7 +41,7 @@ namespace RestaurantApp.Controllers
         }
 
         [HttpGet("GetById")]
-        public async Task<IActionResult> GetMenuItemByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace RestaurantApp.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create([FromForm] MenuItemDTO newMenuItem)
+        public async Task<IActionResult> CreateAsync([FromForm] MenuItemDTO newMenuItem)
         {
             try
             {
@@ -118,7 +118,7 @@ public async Task<IActionResult> DeleteAsync(int id)
 
         [HttpPut("update/{id}")]
 
-        public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)
         {
             try
             {
