@@ -1,8 +1,9 @@
+using RestaurauntApp.Middlewares;
 using RestaurauntApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddTransient<LoggerMD>();
 builder.Services.AddControllersWithViews();
 
 
@@ -33,6 +34,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseMiddleware<LoggerMD>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -40,7 +42,6 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-//app.UseMiddleware<LoggerMD>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
