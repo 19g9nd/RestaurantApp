@@ -2,27 +2,19 @@ using RestaurauntApp.Middlewares;
 using RestaurauntApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("MenuDb");
 
-builder.Services.AddTransient<LoggerMD>();
+builder.Services.AddTransient(provider =>
+{
+    return new LoggerMD(provider.GetRequiredService<ILogger<LoggerMD>>(), provider.GetRequiredService<IConfiguration>(), connectionString);
+});
+
 builder.Services.AddControllersWithViews();
-
 
 builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("MenuDb");
     return new MenuRepository(connectionString);
 });
-
-
-//     builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-//         .AddCookie(options =>
-//         {
-//             options.LoginPath = "/Auth/SinIn";
-//             options.ReturnUrlParameter = "returnUrl";
-//         });
-//     builder.Services.AddAuthorization();
-
-
 
 var app = builder.Build();
 
@@ -37,9 +29,7 @@ if (!app.Environment.IsDevelopment())
 app.UseMiddleware<LoggerMD>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

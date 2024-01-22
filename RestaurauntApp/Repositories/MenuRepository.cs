@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Dapper;
 using RestaurauntApp.DTOS;
 
@@ -37,18 +33,9 @@ namespace RestaurauntApp.Repositories
         public async Task<IEnumerable<MenuItem>> GetAllMenuItemsAsync()
         {
            var menuItems = await connection.QueryAsync<MenuItem>("SELECT * FROM Menu");
-            return menuItems;
+           return menuItems;
         }
-
-        public async Task<MenuItem> GetMenuItemByIdAsync(int id)
-        {
-             var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
-                sql: "SELECT TOP 1 * FROM Menu WHERE Id = @Id",
-                param: new { Id = id });
-
-            return menuItem;
-        }
-
+        
         public async Task<int> UpdateMenuItemAsync(int id, MenuItemDTO menuItemToUpdate)
         {
             var rowsAffected = await connection.ExecuteAsync(
@@ -72,6 +59,4 @@ namespace RestaurauntApp.Repositories
             return rowsAffected;
         }
     }
-        
-    
 }

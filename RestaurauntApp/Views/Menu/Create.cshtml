@@ -2,42 +2,164 @@
     ViewData["Title"] = "Create";
 }
 
+<style>
+
+    body {
+        background-color: #f2f2f2;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 95vh;
+    }
+
+    form {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    form div {
+        margin-bottom: 10px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+    }
+
+    .form-check input[type="checkbox"] {
+        margin-right: 5px;
+    }
+
+    button {
+        background-color: #080708;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    a {
+        text-decoration: none;
+        color: #080708;
+        font-weight: bold;
+    }
+
+    /* Стили для кнопок */
+    .returnBtn {
+        text-align: center;
+    }
+
+    .returnBtn a {
+        background-color: #080708;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 3px;
+        transition: background-color 0.3s;
+        display: inline-block;
+    }
+
+    .returnBtn a:hover {
+        background-color: rgb(26, 18, 86);
+    }
+
+    .resetBtn {
+        background-color: rgb(165, 0, 0);
+    }
+
+    .file-input {
+        display: none;
+        /* Скрыть поле выбора файла */
+    }
+
+    .file-label {
+        background-color: #080708;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    footer {
+        background-color: #080708;
+        color: white;
+        text-align: center;
+        padding: 1em;
+    }
+</style>
+
 <h1>@ViewData["Title"]</h1>
-<form method="post" enctype="multipart/form-data" action="/Menu" class="container mt-4">
-    <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" class="form-control" id="name" name="name">
+<form method="post" enctype="multipart/form-data" action="/Menu" class="main">
+    @{
+        var nameId = "name";
+        var descriptionId = "description";
+        var categoryId = "category";
+        var isVegetarianId = "IsVegetarian";
+        var caloriesId = "calories";
+        var imageId = "image";
+        var priceId = "price";
+    }
+    <div>
+        <label for="@nameId">Name:</label>
+        <input type="text" id="@nameId" name="name">
     </div>
-    <div class="form-group">
-        <label for="description">Description:</label>
-        <input type="text" class="form-control" id="description" name="description">
+    <div>
+        <label for="@descriptionId">Description:</label>
+        <input type="text" id="@descriptionId" name="description">
     </div>
-    <div class="form-group">
-        <label for="category">Category:</label>
-        <input type="text" class="form-control" id="category" name="category">
+    <div>
+        <label for="@categoryId">Category:</label>
+        <input type="text" id="@categoryId" name="category">
     </div>
     <div class="form-check">
-        <input type="checkbox" class="form-check-input" id="isVegetarian" name="isVegetarian">
-        <label class="form-check-label" for="isVegetarian">Is Vegetarian</label>
+        <input type="checkbox" id="@isVegetarianId" name="IsVegetarian">
+        <label for="@isVegetarianId">Is Vegetarian</label>
     </div>
-    <div class="form-group">
-        <label for="calories">Calories:</label>
-        <input type="number" class="form-control" id="calories" name="calories">
+    <div>
+        <label for="@caloriesId">Calories:</label>
+        <input type="number" id="@caloriesId" name="calories">
     </div>
-    <div class="form-group">
-        <label for="imageURL">Image URL:</label>
-        <input type="text" class="form-control" id="imageURL" name="imageURL">
+    <div>
+        <label for="@imageId">Image:</label>
+        <!-- Поле выбора файла -->
+        <input type="file" id="@imageId" name="image" class="file-input" accept="image/*" />
+        <label for="@imageId" class="file-label">Choose Image</label>
     </div>
-    <div class="form-group">
-        <label for="price">Price:</label>
-        <input type="number" class="form-control" id="price" name="price" step="0.01">
+    <div>
+        <label for="@priceId">Price:</label>
+        <input type="number" id="@priceId" name="price" step="0.01">
     </div>
-
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>
+        <button type="reset" class="resetBtn">Reset</button>
+    </div>
+    <div class="returnBtn">
+        <a asp-action="GetAll">Return to menu</a>
     </div>
 </form>
-  <div class="form-group">
-
-        <a asp-action="GetAll" class="btn  btn-info">Return to menu</a>
-    </div>

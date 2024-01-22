@@ -2,12 +2,76 @@
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <style>
+             html {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+           
+            overflow-x: hidden;
+        }
+        section {
+            position: relative;
+            height: 100vh;
+            background: url('https://i.pinimg.com/originals/11/29/1b/11291b781cd4d7d055d2f5cbe54a42cc.jpg') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+
+        .text-overlay {
+            font-size: 30px;
+            z-index: 1;
+        }
+
+        .intro-text {
+            font-size: 20px;
+            margin-top: 20px;
+            /* Add margin at the top */
+            padding: 10px;
+            /* Add padding for spacing within the paragraph */
+        }
+
+        .menu {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1em;
+            text-align: center;
+        }
+
+        .menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5em 1em;
+            margin: 0 1em;
+        }
+
+    </style>
+</head>
+
+<body>
     <section>
         <div class="overlay"></div>
         <div class="text-overlay">
             <h2>Welcome to Pizza Haven!</h2>
-            <p>Indulge in our mouthwatering pizzas made with the finest ingredients.</p>
+            <p class="intro-text">Indulge in our mouthwatering pizzas made with the finest ingredients.</p>
         </div>
     </section>
-
-
+</body>

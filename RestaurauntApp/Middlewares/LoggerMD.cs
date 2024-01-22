@@ -1,10 +1,6 @@
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Text;
 using Dapper;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using RestaurauntApp.Services.Classes;
 
 namespace RestaurauntApp.Middlewares 
@@ -12,15 +8,14 @@ namespace RestaurauntApp.Middlewares
     public class LoggerMD : IMiddleware
     {
         private readonly ILogger<LoggerMD> logger;
-      
         private readonly IConfiguration configuration;
+        private readonly string connectionString;
         private  string requestContent;
-       
-
-        public LoggerMD( ILogger<LoggerMD> logger, IConfiguration configuration)
+        public LoggerMD( ILogger<LoggerMD> logger, IConfiguration configuration,string connection)
         {
             this.logger = logger;
             this.configuration = configuration;
+            this.connectionString = connection;
         }
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
@@ -37,7 +32,7 @@ namespace RestaurauntApp.Middlewares
 
             request.Body.Position = 0;  //rewinding the stream to 0
         }
-        
+
                 var logEntry = new LogEntry
                 {
                     UserId = context.User.Identity.Name, // с аутентификацией
@@ -48,8 +43,8 @@ namespace RestaurauntApp.Middlewares
                     ResponseBody = "", //логика для записи тела response
                     Timestamp = DateTime.UtcNow
                 };
-
-                using (var connection = new SqlConnection("Server=localhost;Database=RestaurantAppDb;Integrated Security=SSPI"))
+                
+                using (var connection = new SqlConnection(connectionString))
                 {
                     await connection.ExecuteAsync("INSERT INTO LogEntries (UserId, Url, Method, StatusCode, RequestBody, ResponseBody, Timestamp) VALUES (@UserId, @Url, @Method, @StatusCode, @RequestBody, @ResponseBody, @Timestamp)", param: logEntry);
                 }
