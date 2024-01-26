@@ -1,9 +1,17 @@
 @{
     ViewData["Title"] = "Create";
 }
+@{
+    string? Name = string.Empty;
+    string? Description = string.Empty;
+    bool IsVegetarian = false;
+    int? Calories = null;
+    string? ImageURL = null;
+    decimal? Price = null;
+    string? Category = string.Empty;
 
+}
 <style>
-
     body {
         background-color: #f2f2f2;
         color: #333;
@@ -116,45 +124,34 @@
 
 <h1>@ViewData["Title"]</h1>
 <form method="post" enctype="multipart/form-data" action="/Menu" class="main">
-    @{
-        var nameId = "name";
-        var descriptionId = "description";
-        var categoryId = "category";
-        var isVegetarianId = "IsVegetarian";
-        var caloriesId = "calories";
-        var imageId = "image";
-        var priceId = "price";
-    }
-    <div>
-        <label for="@nameId">Name:</label>
-        <input type="text" id="@nameId" name="name">
+    <div class="form-group">
+        <label asp-for=@Name>Name:</label>
+        <input asp-for=@Name class="form-control" />
     </div>
-    <div>
-        <label for="@descriptionId">Description:</label>
-        <input type="text" id="@descriptionId" name="description">
+    <div class="form-group">
+        <label asp-for="@Description">Description:</label>
+        <input asp-for="@Description" class="form-control" />
     </div>
-    <div>
-        <label for="@categoryId">Category:</label>
-        <input type="text" id="@categoryId" name="category">
+    <div class="form-group">
+        <label asp-for="@Category">Category:</label>
+        <input asp-for="@Category" class="form-control" />
     </div>
     <div class="form-check">
-        <input type="checkbox" id="@isVegetarianId" name="IsVegetarian">
-        <label for="@isVegetarianId">Is Vegetarian</label>
+        <input asp-for="@IsVegetarian" class="form-check-input" />
+        <label class="form-check-label" asp-for="@IsVegetarian">Is Vegetarian</label>
     </div>
-    <div>
-        <label for="@caloriesId">Calories:</label>
-        <input type="number" id="@caloriesId" name="calories">
+    <div class="form-group">
+        <label asp-for="@Calories">Calories:</label>
+        <input asp-for="@Calories" class="form-control" />
     </div>
-    <div>
-        <label for="@imageId">Image:</label>
-        <!-- Поле выбора файла -->
-        <input type="file" id="@imageId" name="image" class="file-input" accept="image/*" />
-        <label for="@imageId" class="file-label">Choose Image</label>
+    <label for="Image">Image:</label>
+    <input type="file" asp-for="@ImageURL" class="file-input" accept="image/*" />
+    <label asp-for="@ImageURL" class="file-label">Choose Image</label>
+    <div class="form-group">
+        <label asp-for="@Price">Price:</label>
+        <input asp-for="@Price" class="form-control" step="0.01" />
     </div>
-    <div>
-        <label for="@priceId">Price:</label>
-        <input type="number" id="@priceId" name="price" step="0.01">
-    </div>
+
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Create</button>
         <button type="reset" class="resetBtn">Reset</button>

@@ -14,7 +14,6 @@ namespace RestaurantApp.Controllers
             this.menuRepository = menuRepository;
         }
 
-
         public async Task<IActionResult> GetAll()
         {
             try
