@@ -6,7 +6,7 @@
     string? Description = string.Empty;
     bool IsVegetarian = false;
     int? Calories = null;
-    string? ImageURL = null;
+    string? ImageURL = "image";
     decimal? Price = null;
     string? Category = string.Empty;
 
@@ -144,9 +144,12 @@
         <label asp-for="@Calories">Calories:</label>
         <input asp-for="@Calories" class="form-control" />
     </div>
-    <label for="Image">Image:</label>
-    <input type="file" asp-for="@ImageURL" class="file-input" accept="image/*" />
-    <label asp-for="@ImageURL" class="file-label">Choose Image</label>
+    <div>
+        <label for="@ImageURL">Image:</label>
+        <!-- Поле выбора файла -->
+        <input type="file" id="@ImageURL" name="image" class="file-input" accept="image/*" />
+        <label for="@ImageURL" class="file-label">Choose Image</label>
+    </div>
     <div class="form-group">
         <label asp-for="@Price">Price:</label>
         <input asp-for="@Price" class="form-control" step="0.01" />
