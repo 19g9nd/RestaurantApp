@@ -9,6 +9,6 @@ namespace RestaurauntApp.Services.Classes
         public int StatusCode { get; set; }
         public string RequestBody { get; set; }
         public string ResponseBody { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime CreationDate { get; set; }
     }
 }
