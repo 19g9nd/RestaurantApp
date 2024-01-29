@@ -14,7 +14,7 @@ namespace RestaurauntApp.Repositories
         public async Task<int> CreateMenuItemAsync(MenuItemDTO newMenuItem)
         {
           var rowsAffected = await connection.ExecuteAsync(
-                @"INSERT INTO Menu (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
+                @"INSERT INTO MenuItems (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
                   VALUES (@Name, @Description, @Category, @IsVegetarian, @Calories, @ImageURL, @Price)",
                 param: newMenuItem);
 
@@ -24,7 +24,7 @@ namespace RestaurauntApp.Repositories
         public async Task<int> DeleteMenuItemAsync(int id)
         {
              var rowsDeleted = await connection.ExecuteAsync(
-                @"DELETE FROM Menu WHERE Id = @Id",
+                @"DELETE FROM MenuItems WHERE Id = @Id",
                 param: new { Id = id });
 
             return rowsDeleted;
@@ -32,14 +32,14 @@ namespace RestaurauntApp.Repositories
 
         public async Task<IEnumerable<MenuItem>> GetAllMenuItemsAsync()
         {
-           var menuItems = await connection.QueryAsync<MenuItem>("SELECT * FROM Menu");
+           var menuItems = await connection.QueryAsync<MenuItem>("SELECT * FROM MenuItems");
            return menuItems;
         }
         
         public async Task<int> UpdateMenuItemAsync(int id, MenuItemDTO menuItemToUpdate)
         {
             var rowsAffected = await connection.ExecuteAsync(
-                @"UPDATE Menu
+                @"UPDATE MenuItems
                   SET Name = @Name, Description = @Description, Category = @Category, 
                       IsVegetarian = @IsVegetarian, Calories = @Calories, 
                       ImageURL = @ImageURL, Price = @Price

@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using RestaurauntApp.Data;
 using RestaurauntApp.Middlewares;
 using RestaurauntApp.Repositories;
+using RestaurauntApp.Repositories.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MenuDb");
+
+builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
+    options.UseSqlServer(connectionString)
+);
 
 builder.Services.AddTransient(provider =>
 {
@@ -14,6 +21,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
 {
     return new MenuRepository(connectionString);
+});
+builder.Services.AddScoped<IAccountRepository, AccountRepository>(provider =>
+{
+    return new AccountRepository(connectionString);
 });
 
 var app = builder.Build();
