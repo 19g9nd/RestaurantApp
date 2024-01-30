@@ -1,94 +1,108 @@
 @{
     ViewData["Title"] = "Register";
 }
+@model RestaurauntApp.DTOS.UserDTO
 
 <head>
-   <style>
-    body {
-        background-color: #f2f2f2;
-        color: #333;
-        margin: 0;
-        padding: 0;
-    }
+    <style>
+        body {
+            background-color: #f2f2f2;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
 
-    h1 {
-        text-align: center;
-        padding: 20px;
-    }
+        h1 {
+            text-align: center;
+            padding: 20px;
+        }
 
-    .main {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 95vh;
-    }
+        .main {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95vh;
+        }
 
-    form {
-        max-width: 700px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    }
+        form {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
 
-    form div {
-        margin-bottom: 20px;
-    }
+        form div {
+            margin-bottom: 20px;
+        }
 
-    label {
-        display: block;
-        font-weight: bold;
-    }
+        label {
+            display: block;
+            font-weight: bold;
+        }
 
-    input[type="text"],
-    input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-    }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
 
-    button {
-        background-color: #e91e63;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 3px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.6s; 
-    }
+        button {
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.6s;
+        }
 
-    a {
-        text-decoration: none;
-        color: #080708;
-        font-weight: bold;
-    }
+        a {
+            text-decoration: none;
+            color: #080708;
+            font-weight: bold;
+        }
 
-    button:hover {
-        background-color:  #6f1ee9;
-    }
-</style>
+        button:hover {
+            background-color: #6f1ee9;
+        }
+        .validator {
+            color: red;
+            font-weight: bold;
 
-      
+        }
+    </style>
+
+
 </head>
 
 <body>
 
     <div class="registration-form">
         <h1>@ViewData["Title"]</h1>
-        <form method="post" action="/account/register">
+        <form method="post"  asp-action="Register" asp-controller="Account">
+            <div asp-validation-summary="All" class="validator"></div>
             <div class="form-group">
-                <label for="Name">Name:</label>
-                <input type="text" id="Name" name="Name" required />
+                <label asp-for="Name">Name:</label>
+                <input type="text" asp-for="Name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Password">Password:</label>
-                <input type="password" id="Password" name="Password" required />
+                <label asp-for="Password">Password:</label>
+                <input type="password" asp-for="Password" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
+
             <button type="submit">Register</button>
         </form>
     </div>
 </body>
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

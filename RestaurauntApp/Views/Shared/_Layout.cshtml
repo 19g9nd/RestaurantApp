@@ -8,7 +8,6 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/RestaurantApp.styles.css" asp-append-version="true" />
     <link href="https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide"
         rel="stylesheet">
     @RenderSection("Styles", required: false)
@@ -74,13 +73,13 @@
             text-transform: uppercase;
         }
 
-     nav a:not(.logo-link):hover {
-    color: yellow;
-    background-color: #080708;
-    transition: 0.3s;
-    cursor: pointer;
-    box-shadow: 0px 0px 10px yellow;
-}
+        nav a:not(.logo-link):hover {
+            color: yellow;
+            background-color: #080708;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0px 0px 10px yellow;
+        }
 
         .logo-link {
             align-items: center;
@@ -104,39 +103,49 @@
             text-align: center;
             padding: 1em;
         }
-         .page-container {
+
+        .page-container {
             display: flex;
             flex-direction: column;
-            min-height: 100vh; 
+            min-height: 100vh;
         }
 
         main {
-            flex-grow: 1; /* Allow the main content to grow and push the footer to the bottom */
+            flex-grow: 1;
+            /* Allow the main content to grow and push the footer to the bottom */
         }
     </style>
 </head>
 
 <body>
     <div class="page-container">
-    <header class="sticky-header">
-        <nav>
-            <div>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="logo-link">
-                    <img src="@Url.Content("~/Assets/icon.png")" alt="Pizza Haven Logo" width="50" height="50"
-                        class="logo-image">
-                    <span class="logo-text">Pizza Haven</span>
-                </a>
-                <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                <a asp-area="" asp-controller="Menu" asp-action="GetAll">Menu</a>
-                <a asp-area="" asp-controller="Menu" asp-action="Create">Create menu item</a>
-                <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-            </div>
-        </nav>
-    </header>
+        <header class="sticky-header">
+            <nav>
+                <div>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="logo-link">
+                        <img src="@Url.Content("~/Assets/icon.png")" alt="Pizza Haven Logo" width="50" height="50"
+                            class="logo-image">
+                        <span class="logo-text">Pizza Haven</span>
+                    </a>
+                    <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                    <a asp-area="" asp-controller="Menu" asp-action="GetAll">Menu</a>
+                    <a asp-area="" asp-controller="Menu" asp-action="Create">Create menu item</a>
+                    @if (this.User.Identity.IsAuthenticated == false)
+                    {
+                    <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                    }
+                    @if (this.User.Identity.IsAuthenticated)
+                    {
+                        <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+                    }
+                </div>
+            </nav>
+        </header>
 
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        @await RenderSectionAsync("Scripts", required: false)
     </div>
 </body>
 

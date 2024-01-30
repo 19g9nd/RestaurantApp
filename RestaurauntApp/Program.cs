@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
 using RestaurauntApp.Middlewares;
@@ -10,6 +11,19 @@ var connectionString = builder.Configuration.GetConnectionString("MenuDb");
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    //options.User.RequireUniqueEmail = true;
+    options.Password = new PasswordOptions
+    {
+        RequireDigit = false,
+        RequiredLength = 4,
+        RequireNonAlphanumeric = false,
+        RequireUppercase = false,
+        RequireLowercase = false
+    };
+})
+    .AddEntityFrameworkStores<RestaurantAppDbContext>();
 
 builder.Services.AddTransient(provider =>
 {
@@ -17,6 +31,8 @@ builder.Services.AddTransient(provider =>
 });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews();
+builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
 {
@@ -41,6 +57,7 @@ app.UseMiddleware<LoggerMD>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
