@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
@@ -11,20 +12,11 @@ var connectionString = builder.Configuration.GetConnectionString("MenuDb");
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    //options.User.RequireUniqueEmail = true;
-    options.Password = new PasswordOptions
-    {
-        RequireDigit = false,
-        RequiredLength = 4,
-        RequireNonAlphanumeric = false,
-        RequireUppercase = false,
-        RequireLowercase = false
-    };
-})
-    .AddEntityFrameworkStores<RestaurantAppDbContext>();
-
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => {
+        options.LoginPath = "/Account/Login";
+        options.ReturnUrlParameter = "returnUrl";
+    });
 builder.Services.AddTransient(provider =>
 {
     return new LoggerMD(provider.GetRequiredService<ILogger<LoggerMD>>(), provider.GetRequiredService<IConfiguration>(), connectionString);

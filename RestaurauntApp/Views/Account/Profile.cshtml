@@ -2,8 +2,43 @@
     ViewData["Title"] = "Profile";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-<div>
-    profile info
-</div>
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1em;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>@ViewData["Title"]</h1>
+    </header>
+
+    <main>
+        <div>
+            <h2>Welcome to your profile,  <span style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
+        </div>
+    </main>
+</body>
+</html>

@@ -89,7 +89,7 @@
 
         /* Style for the delete button */
         .deleteBtn {
-            background-color: #c60042 !important;
+            background-color: #c60042;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -97,8 +97,24 @@
             cursor: pointer;
         }
 
+        .orderBtn {
+            background-color: #f5006a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background-color 0.6ms;
+        }
+
+        .orderBtn:hover {
+            background-color: #ff004c;
+        }
+
+
         .deleteBtn:hover {
-            background-color: #ff0004;
+            background-color: #0011ff;
         }
 
         .createBtn {
@@ -151,18 +167,27 @@
 
                 <p><strong>Calories:</strong> @menuItem.Calories</p>
                 <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
-                <form id="deleteForm-@menuItem.Id">
-                    <input type="hidden" name="id" value="@menuItem.Id" />
-                    <button type="button" class="deleteBtn" onclick="submitDelete(@menuItem.Id)">Delete</button>
-                </form>
+                @if (this.User.IsInRole("Administrator"))
+                {
+                    <form id="deleteForm-@menuItem.Id">
+                        <input type="hidden" name="id" value="@menuItem.Id" />
+                        <button type="button" class="deleteBtn" onclick="submitDelete(@menuItem.Id)">Delete</button>
+                    </form>
+                }
+                else
+                {
+                    <a href="#" class="orderBtn">Order Now</a>
+                }
 
             </div>
         </div>
     }
-
-    <div class="createBtn">
-        <a asp-action="Create">Add New Item</a>
-    </div>
+    @if (this.User.IsInRole("Administrator"))
+    {
+        <div class="createBtn">
+            <a asp-action="Create">Add New Item</a>
+        </div>
+    }
 </body>
 
 </html>

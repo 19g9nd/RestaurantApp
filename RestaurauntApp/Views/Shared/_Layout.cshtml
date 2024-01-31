@@ -129,7 +129,9 @@
                     </a>
                     <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     <a asp-area="" asp-controller="Menu" asp-action="GetAll">Menu</a>
+                     @if (this.User.IsInRole("Administrator")){
                     <a asp-area="" asp-controller="Menu" asp-action="Create">Create menu item</a>
+                     }
                     @if (this.User.Identity.IsAuthenticated == false)
                     {
                     <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
@@ -137,6 +139,7 @@
                     @if (this.User.Identity.IsAuthenticated)
                     {
                         <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+                         <a asp-area="" asp-controller="Account" asp-action="LogOut">Logout</a>
                     }
                 </div>
             </nav>

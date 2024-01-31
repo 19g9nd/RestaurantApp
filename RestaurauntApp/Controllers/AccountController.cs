@@ -1,26 +1,20 @@
 using System;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using RestaurauntApp.DTOS;
-using RestaurauntApp.Repositories.Base;
 
 namespace RestaurauntApp.Controllers
 {
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly IAccountRepository accountRepository;
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signInManager;
-
-        public AccountController(IAccountRepository repository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public AccountController()
         {
-            this.accountRepository = repository;
-            this.userManager = userManager;
-            this.signInManager = signInManager;
         }
 
         [HttpGet]
@@ -29,7 +23,7 @@ namespace RestaurauntApp.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                // Пользователь уже аутентифицирован,ему нет смысла быть тут
+                // User is already authenticated, redirect to the home page
                 return RedirectToAction("Index", "Home");
             }
             return View();
@@ -37,47 +31,23 @@ namespace RestaurauntApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken] // атрибут для защиты от CSRF
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromForm] UserDTO newUser)
         {
             try
             {
-                var newAccount = new IdentityUser
-                {
-                    UserName = newUser.Name,
-                    // Email = newUser.Email,
+                var claims = new Claim[] {
+                    new Claim(ClaimTypes.Name, newUser.Name),
+                    new Claim("creation_date_utc", DateTime.UtcNow.ToString())
                 };
 
-                var result = await userManager.CreateAsync(newAccount, newUser.Password);
-                System.Console.WriteLine(result.ToString());
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(
+                    scheme: CookieAuthenticationDefaults.AuthenticationScheme,
+                    principal: new ClaimsPrincipal(claimsIdentity)
+                );
 
-                if (result.Succeeded)
-                {
-                    // Успешная регистрация
-                    await signInManager.SignInAsync(newAccount, isPersistent: false);
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    // Ошибки регистрации
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-
-                    // Вывод ошибок в консоль
-                    var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList();
-                    foreach (var modelState in errors)
-                    {
-                        foreach (var error in modelState.Value.Errors)
-                        {
-                            System.Console.WriteLine($"{modelState.Key}: {error.ErrorMessage}");
-                        }
-                    }
-
-                    // view с ошибкой
-                    return View("Register");
-                }
+                return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
             {
@@ -85,10 +55,19 @@ namespace RestaurauntApp.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
             }
         }
-        [Authorize]//если пользователь зарегистрирован только 
+          [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> LogOut() {
+            await base.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return base.RedirectToAction(actionName: "GetAll", controllerName: "Menu");
+        }
+
+        [Authorize]
         public IActionResult Profile()
         {
             return View();
         }
+        
     }
 }
