@@ -1,9 +1,137 @@
 @{
     ViewData["Title"] = "Login";
 }
+@model RestaurauntApp.DTOS.UserDTO
+<style>
+    body {
+        position: relative;
+        background-image: url("/Assets/LoginImg.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-color: #111;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+    }
 
-<h1>@ViewData["Title"]</h1>
+    /* Add a semi-transparent black overlay */
+    body::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+    }
 
-<div>
-    
+    /* Styling for links */
+    a {
+        color: #e91e63;
+        font-weight: bold;
+    }
+
+    /* Styling for validation messages */
+    .text-danger {
+        color: #ff5555;
+    }
+
+    h1 {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .main {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 95vh;
+    }
+
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background-color: rgb(0 0 0 / 20%);
+        backdrop-filter: blur(7px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    form div {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 3px;
+        background: none;
+    }
+
+    button {
+        background-color: #e91e63;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.6s;
+        align-self: center;
+    }
+
+    a {
+        text-decoration: none;
+        color: #080708;
+        font-weight: bold;
+    }
+
+    h1 {
+        color: yellow;
+    }
+
+    button:hover {
+        background-color: #6f1ee9;
+    }
+
+    .validator {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<div class="registration-form">
+    <h1>@ViewData["Title"]</h1>
+    <form method="post" asp-action="Login" asp-controller="Account">
+        <div asp-validation-summary="All" class="validator"></div>
+        <div class="form-group">
+            <label asp-for="Name">Name:</label>
+            <input type="text" asp-for="Name" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">Password:</label>
+            <input type="password" asp-for="Password" required />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <button type="submit">Login</button>
+    </form>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

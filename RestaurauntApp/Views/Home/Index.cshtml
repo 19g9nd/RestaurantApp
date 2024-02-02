@@ -4,7 +4,7 @@
 
 <head>
     <style>
-             html {
+        html {
             height: 100%;
         }
 
@@ -13,9 +13,9 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-           
             overflow-x: hidden;
         }
+
         section {
             position: relative;
             height: 100vh;
@@ -36,18 +36,16 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
 
-
         .text-overlay {
             font-size: 30px;
             z-index: 1;
+            word-wrap: break-word; /* Add this line to prevent text from getting squished */
         }
 
         .intro-text {
             font-size: 20px;
             margin-top: 20px;
-            /* Add margin at the top */
             padding: 10px;
-            /* Add padding for spacing within the paragraph */
         }
 
         .menu {
@@ -63,8 +61,19 @@
             margin: 0 1em;
         }
 
+        @@media (max-width: 768px) {
+            .text-overlay {
+                font-size: 20px;
+            }
+
+            .intro-text {
+                font-size: 16px;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
+
 
 <body>
     <section>
