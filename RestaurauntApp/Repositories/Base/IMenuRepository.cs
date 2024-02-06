@@ -8,5 +8,6 @@ namespace RestaurauntApp.Repositories
         Task<int> CreateMenuItemAsync(MenuItemDTO newMenuItem);
         Task<int> DeleteMenuItemAsync(int id);
         Task<int> UpdateMenuItemAsync(int id, MenuItemDTO menuItemToUpdate);
+        Task<MenuItem> GetMenuItemAsync(int id);
     }
 }
