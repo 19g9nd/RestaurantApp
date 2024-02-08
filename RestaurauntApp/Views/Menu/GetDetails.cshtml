@@ -100,7 +100,7 @@
         <p><strong>Is Vegetarian:</strong> @(Model.IsVegetarian ? "Yes" : "No")</p>
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" value="1" min="1" class="price-tag" />
-        <button class="button-56" onclick="addToCart(@Model.Id)">Add to Cart</button>
+        <button class="button-56" onclick="addToCart(@Model.Id,'@Model.Name',@Model.Price)">Add to Cart</button>
         <!-- Container for displaying the added message -->
         <div id="addedMessage" style="color: green;"></div>
     </div>

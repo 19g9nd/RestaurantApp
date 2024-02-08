@@ -8,6 +8,7 @@ using RestaurauntApp.Repositories.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MenuDb");
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
     options.UseSqlServer(connectionString)

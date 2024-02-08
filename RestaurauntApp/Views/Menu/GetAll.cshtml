@@ -171,7 +171,7 @@
 
     .button-50 {
         appearance: button;
-          background-color: #f5006a;
+        background-color: #f5006a;
         color: white;
         background-image: none;
         border: 1px solid #000;
@@ -244,7 +244,8 @@
                     {
                         <form id="deleteForm-@menuItem.Id">
                             <input type="hidden" name="id" value="@menuItem.Id" />
-                            <button type="button" class="button-50 delete-button" onclick="submitDelete(@menuItem.Id)">Delete</button>
+                            <button type="button" class="button-50 delete-button"
+                                onclick="submitDelete(@menuItem.Id)">Delete</button>
                         </form>
                     }
                     <a onclick="openDetails(@menuItem.Id)" class="button-50">Details</a>
@@ -320,14 +321,41 @@
                 });
         }
     }
-    function addToCart(itemId) {
-        var quantity = document.getElementById("quantity").value;
-        // Logic to add item to cart
-        var message = "Added " + quantity + " item(s)  " + " to cart.";
+
+  function addToCart(itemId, itemName, itemPrice) {
+    var quantity = document.getElementById("quantity").value;
+    var url = "/Cart/AddToCart";
+//идет в CartItem 
+    var data = {
+        itemId: itemId,
+        Name: itemName,
+        Price: itemPrice,
+        quantity: quantity
+    };
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to add item to cart.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        var message = "Added " + quantity + " item(s) to cart.";
         document.getElementById("addedMessage").innerHTML = message;
         setTimeout(function () {
             document.getElementById("addedMessage").innerHTML = "";
         }, 2000);
-    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 </script>
