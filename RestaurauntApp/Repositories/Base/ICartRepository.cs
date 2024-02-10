@@ -5,11 +5,8 @@ namespace RestaurauntApp.Repositories.Base
 {
     public interface ICartRepository
     {
+        Task<Cart> GetCartWithItems(string userName);
         Task<bool> AddToCart(CartItemDTO cartItem, string userName);
-        // Task<bool> RemoveFromCart(int cartDetailsId);
-        // Task<int> Clear(int id);
-        // Task RemoveFromCart(int cartId, int menuItemId);
-        
     }
 
 }

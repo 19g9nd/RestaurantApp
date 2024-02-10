@@ -1,0 +1,91 @@
+@model RestaurauntApp.Models.Cart
+
+<style>
+    /* Стили для основного контейнера */
+    .main-container {
+        background-color: #f2f2f2;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        max-height: fit-content;
+    }
+
+    /* Стили для заголовка страницы */
+    h2 {
+        text-align: center;
+        padding: 20px;
+        color: #ff4081;
+        font-size: 28px;
+    }
+
+    /* Стили для сообщения о пустой корзине */
+    .empty-cart-message {
+        font-style: italic;
+        color: #777;
+        text-align: center;
+    }
+
+    /* Стили для таблицы */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+
+    .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #f2f2f2;
+    }
+
+    /* Стили для строки с итемами корзины */
+    .cart-item-row {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Стили для общей цены */
+    .total-price {
+        text-align: right;
+        font-weight: bold;
+        margin-right: 20px;
+        color: #f90099;
+    }
+</style>
+
+<body class="main-container">
+    <h2>Cart</h2>
+
+    @if (Model != null && Model.CartItems.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr class="cart-item-row">
+                        <td>@item.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Price</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <p class="total-price">Total Price: @Model.TotalPrice</p>
+    }
+    else
+    {
+        <p class="empty-cart-message">No items in the cart yet.</p>
+    }
+</body>

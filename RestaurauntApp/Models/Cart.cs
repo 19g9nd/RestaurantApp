@@ -4,7 +4,7 @@ namespace RestaurauntApp.Models
     {
         public int Id { get; set; }
         public string UserName { get; set; }
-        public List<CartItem> CartItems { get; set; }
+         public virtual ICollection<CartItem> CartItems { get; set; }
         public DateTime CreatedAt { get; set; }
         public decimal TotalPrice { get; set; }
 

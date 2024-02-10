@@ -14,6 +14,15 @@ namespace RestaurauntApp.Repositories
         {
             this.context = context;
         }
+
+        public async Task<Cart> GetCartWithItems(string userName)
+        {
+            var cart = await context.Carts
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.UserName == userName);
+            return cart;
+        }
+
         public async Task<bool> AddToCart(CartItemDTO cartItem, string userName)
         {
             try
@@ -24,7 +33,10 @@ namespace RestaurauntApp.Repositories
                 }
 
                 // Проверка существует ли уже корзина у пользователя
-                var cart = await context.Carts.FirstOrDefaultAsync(c => c.UserName == userName);
+                var cart = await context.Carts
+                   .Include(c => c.CartItems) 
+                   .FirstOrDefaultAsync(c => c.UserName == userName);
+
 
                 if (cart == null)
                 {
@@ -39,14 +51,14 @@ namespace RestaurauntApp.Repositories
                     MenuItemId = cartItem.MenuItemId,
                     Quantity = cartItem.Quantity,
                     Name = cartItem.Name,
-                    Price = cartItem.Price
-      
+                    Price = cartItem.Price,
+                    UserName = userName
                 };
-                //TODO:
-                //добавить информацию в корзину totalprice,CartItems
 
                 // Добавляем элемент в корзину
                 cart.CartItems.Add(cartItemModel);
+                // Update total price of the cart
+                cart.TotalPrice += (cartItem.Price * cartItem.Quantity);
 
                 // Сохраняем изменения в базе данных
                 await context.SaveChangesAsync();

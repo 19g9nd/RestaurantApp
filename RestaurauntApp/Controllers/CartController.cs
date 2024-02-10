@@ -24,12 +24,13 @@ namespace RestaurauntApp.Controllers
         {
             try
             {
-                 var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
-              
-                var result = await cartRepository.AddToCart(cartItem,userName);
+                var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
+
+                var result = await cartRepository.AddToCart(cartItem, userName);
                 if (result)
                 {
-                    return RedirectToAction("GetAll", "Menu");
+                    return RedirectToAction("Cart", "Cart"); // Перейти на страницу корзины
+                                                             //   return RedirectToAction("GetAll", "Menu");
                 }
                 else
                 {
@@ -43,6 +44,20 @@ namespace RestaurauntApp.Controllers
             }
         }
 
-
+        [HttpGet]
+        public async Task<IActionResult> Cart()
+        {
+            try
+            {
+                var userName = User.Identity.Name;
+                var cart = await cartRepository.GetCartWithItems(userName);
+                return View(cart);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
+        }
     }
 }

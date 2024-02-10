@@ -327,7 +327,7 @@
     var url = "/Cart/AddToCart";
 //идет в CartItem 
     var data = {
-        itemId: itemId,
+        MenuItemId: itemId,
         Name: itemName,
         Price: itemPrice,
         quantity: quantity
@@ -344,14 +344,12 @@
         if (!response.ok) {
             throw new Error('Failed to add item to cart.');
         }
-        return response.json();
-    })
-    .then(data => {
         var message = "Added " + quantity + " item(s) to cart.";
         document.getElementById("addedMessage").innerHTML = message;
         setTimeout(function () {
             document.getElementById("addedMessage").innerHTML = "";
-        }, 2000);
+        }, 3000);
+        return response.json();
     })
     .catch(error => {
         console.error('Error:', error);
