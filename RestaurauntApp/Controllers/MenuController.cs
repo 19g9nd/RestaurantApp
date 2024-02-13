@@ -98,6 +98,20 @@ namespace RestaurantApp.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
             }
         }
+        [HttpGet]
+        [Route("GetDetails")]
+        public async Task<IActionResult> GetDetails(int id)
+        {
+            try
+            {
+                var menuItem = await menuRepository.GetMenuItemAsync(id);
+                return View(menuItem);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, $"An error occurred while processing the request, {ex}.");
+            }
+        }
 
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)

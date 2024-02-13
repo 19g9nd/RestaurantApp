@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
@@ -7,10 +8,12 @@ using RestaurauntApp.Repositories.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MenuDb");
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     //options.User.RequireUniqueEmail = true;
@@ -24,6 +27,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     };
 })
     .AddEntityFrameworkStores<RestaurantAppDbContext>();
+
 
 builder.Services.AddTransient(provider =>
 {

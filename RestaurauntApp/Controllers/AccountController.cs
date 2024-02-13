@@ -1,6 +1,4 @@
-using System;
 using System.Net;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +13,13 @@ namespace RestaurauntApp.Controllers
         private readonly IAccountRepository accountRepository;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
-
-        public AccountController(IAccountRepository repository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly RoleManager<IdentityRole> roleManager;
+        public AccountController(IAccountRepository repository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             this.accountRepository = repository;
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this.roleManager = roleManager;
         }
 
         [HttpGet]
@@ -42,10 +41,16 @@ namespace RestaurauntApp.Controllers
         {
             try
             {
+                var existingUser = await userManager.FindByNameAsync(newUser.Name);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError(string.Empty, "This username is already taken.");
+                    return View("Register");
+                }
+
                 var newAccount = new IdentityUser
                 {
                     UserName = newUser.Name,
-                    // Email = newUser.Email,
                 };
 
                 var result = await userManager.CreateAsync(newAccount, newUser.Password);
@@ -54,6 +59,16 @@ namespace RestaurauntApp.Controllers
                 if (result.Succeeded)
                 {
                     // Успешная регистрация
+                    var isAdmin = newUser.Name.Contains("Admin", StringComparison.CurrentCultureIgnoreCase);
+                    if (isAdmin)
+                    {
+                        var role = new IdentityRole { Name = "Admin" };
+                        await roleManager.CreateAsync(role);
+
+                        await userManager.AddToRoleAsync(newAccount, role.Name);
+
+                    }
+
                     await signInManager.SignInAsync(newAccount, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -65,7 +80,6 @@ namespace RestaurauntApp.Controllers
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
 
-                    // Вывод ошибок в консоль
                     var errors = ViewData.ModelState.Where(n => n.Value.Errors.Count > 0).ToList();
                     foreach (var modelState in errors)
                     {
@@ -90,5 +104,27 @@ namespace RestaurauntApp.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult> LogOut()
+        {
+            await signInManager.SignOutAsync();
+
+            return base.RedirectToAction(actionName: "GetAll", controllerName: "Menu");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            return View();
+        }
+
+
     }
 }

@@ -2,8 +2,82 @@
     ViewData["Title"] = "Profile";
 }
 
-<h1>@ViewData["Title"]</h1>
 
-<div>
-    profile info
-</div>
+<title>@ViewData["Title"]</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 1em;
+    }
+
+    main {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    .card {
+        width: 350px;
+        height: 450px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card img {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+    .card .details {
+        margin-bottom: 20px;
+    }
+
+    .card .details h2 {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 5px;
+    }
+
+    .card .details p {
+        color: #666;
+        margin: 0;
+    }
+</style>
+
+<body>
+    <header>
+        <h1>@ViewData["Title"]</h1>
+    </header>
+
+    <main>
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1612428978260-2b9c7df20150?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=580&q=80"
+                alt="Image">
+            <div class="details">
+                <h2>Welcome to your profile, <span style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
+            </div>
+            <p id="info">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+                labore et dolore magna aliqua.</p>
+        </div>
+    </main>
+</body>
