@@ -76,7 +76,7 @@
                     <tr class="cart-item-row">
                         <td>@item.Name</td>
                         <td>@item.Quantity</td>
-                        <td>@item.Price</td>
+                        <td>@(item.Price * item.Quantity)</td>
                     </tr>
                 }
             </tbody>

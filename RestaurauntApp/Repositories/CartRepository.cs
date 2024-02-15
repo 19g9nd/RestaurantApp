@@ -34,7 +34,7 @@ namespace RestaurauntApp.Repositories
 
                 // Проверка существует ли уже корзина у пользователя
                 var cart = await context.Carts
-                   .Include(c => c.CartItems) 
+                   .Include(c => c.CartItems)
                    .FirstOrDefaultAsync(c => c.UserName == userName);
 
 
@@ -54,10 +54,17 @@ namespace RestaurauntApp.Repositories
                     Price = cartItem.Price,
                     UserName = userName
                 };
-
+                var existingCartItem = cart.CartItems.FirstOrDefault(ci => ci.MenuItemId == cartItem.MenuItemId);
+                //если обьект уже в корзине просто увеличить quantity
+                if (existingCartItem != null)
+                {
+                    existingCartItem.Quantity += cartItem.Quantity;
+                }
+                else {
                 // Добавляем элемент в корзину
                 cart.CartItems.Add(cartItemModel);
-                // Update total price of the cart
+                }
+               
                 cart.TotalPrice += (cartItem.Price * cartItem.Quantity);
 
                 // Сохраняем изменения в базе данных
