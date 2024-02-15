@@ -1,6 +1,6 @@
 namespace RestaurauntApp.DTOS
 {
-    public class CartItemDTO
+    public class OrderItemDTO
     {
         public int MenuItemId { get; set; }
         public string Name { get; set; }

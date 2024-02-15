@@ -7,20 +7,20 @@ namespace RestaurauntApp.Controllers
     [Route("[controller]/[action]")]
     public class CartController : Controller
     {
-        private readonly ICartRepository cartRepository;
+        private readonly IOrderRepository cartRepository;
 
-        public CartController(ICartRepository cartRepository)
+        public CartController(IOrderRepository cartRepository)
         {
             this.cartRepository = cartRepository;
         }
         [HttpPost]
-        public async Task<IActionResult> AddToCart([FromBody] CartItemDTO cartItem)
+        public async Task<IActionResult> AddToCart([FromBody] OrderItemDTO cartItem)
         {
             try
             {
                 var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
 
-                var result = await cartRepository.AddToCart(cartItem, userName);
+                var result = await cartRepository.AddToOrder(cartItem, userName);
                 if (result)
                 {
                     return RedirectToAction("GetAll", "Menu");
@@ -43,7 +43,7 @@ namespace RestaurauntApp.Controllers
             try
             {
                 var userName = User.Identity.Name;
-                var cart = await cartRepository.GetCartWithItems(userName);
+                var cart = await cartRepository.GetOrderWithItems(userName);
                 return View(cart);
             }
             catch (Exception ex)

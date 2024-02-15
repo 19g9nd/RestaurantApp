@@ -1,4 +1,4 @@
-@model RestaurauntApp.Models.Cart
+@model RestaurauntApp.Models.Order
 
 <style>
     /* Стили для основного контейнера */
@@ -60,7 +60,7 @@
 <body class="main-container">
     <h2>Cart</h2>
 
-    @if (Model != null && Model.CartItems.Any())
+    @if (Model != null && Model.OrderItems.Any())
     {
         <table class="table">
             <thead>
@@ -71,7 +71,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.CartItems)
+                @foreach (var item in Model.OrderItems)
                 {
                     <tr class="cart-item-row">
                         <td>@item.Name</td>

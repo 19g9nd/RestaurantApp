@@ -53,6 +53,7 @@ namespace RestaurauntApp.Controllers
                     UserName = newUser.Name,
                 };
 
+                await accountRepository.CreateAccountAsync(newUser);
                 var result = await userManager.CreateAsync(newAccount, newUser.Password);
                 System.Console.WriteLine(result.ToString());
 
@@ -124,7 +125,29 @@ namespace RestaurauntApp.Controllers
             }
             return View();
         }
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Login(UserDTO user)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await signInManager.PasswordSignInAsync(user.Name, user.Password, false, lockoutOnFailure: false);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Incorrect login or password");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Invalid login attempt");
+            }
 
-
+            return View();
+        }
     }
 }
