@@ -1,5 +1,9 @@
 @model RestaurauntApp.Models.Order
 
+@{
+    ViewData["Title"] = "Cart";
+}
+
 <style>
     /* Стили для основного контейнера */
     .main-container {
@@ -33,7 +37,8 @@
         margin-bottom: 20px;
     }
 
-    .table th, .table td {
+    .table th,
+    .table td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
@@ -55,6 +60,37 @@
         margin-right: 20px;
         color: #f90099;
     }
+
+    .button-wrapper {
+        display: inline-block;
+        width: 48px;
+        height: 30px;
+        margin-right: 5px;
+    }
+
+    .remove_cmpl_btn {
+        display: inline-block;
+        width: 48px;
+        height: 30px;
+        background: url('/Assets/delete-64.ico') no-repeat;
+        background-size: 60%;
+    }
+
+    .remove_btn {
+        display: inline-block;
+        width: 48px;
+        height: 30px;
+        background: url('/Assets/minus-7-64.ico') no-repeat;
+        background-size: 70%;
+    }
+
+    .add_btn {
+        display: inline-block;
+        width: 48px;
+        height: 30px;
+        background: url('/Assets/plus-64.ico') no-repeat;
+        background-size: 60%;
+    }
 </style>
 
 <body class="main-container">
@@ -68,6 +104,7 @@
                     <th>Item Name</th>
                     <th>Quantity</th>
                     <th>Price</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,6 +114,12 @@
                         <td>@item.Name</td>
                         <td>@item.Quantity</td>
                         <td>@(item.Price * item.Quantity)</td>
+                        <td> <!-- Новый столбец для кнопок удаления -->
+
+                            <div class="button-wrapper">
+                                <span class="remove_cmpl_btn" onclick="removeItem('@item.Id')"></span>
+                            </div>
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -89,3 +132,23 @@
         <p class="empty-cart-message">No items in the cart yet.</p>
     }
 </body>
+
+
+<script>
+    async function removeItem(itemId) {
+        if (confirm('Are you sure you want to delete this item?')) {
+            try {
+                const response = await fetch(`/Cart/RemoveItem?itemId=${itemId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to remove item from cart.');
+                }
+                window.location.reload();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    }
+</script>

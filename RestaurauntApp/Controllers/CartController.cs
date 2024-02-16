@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using RestaurauntApp.DTOS;
 using RestaurauntApp.Repositories.Base;
@@ -52,5 +53,31 @@ namespace RestaurauntApp.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> RemoveItem(int itemId)
+        {
+            try
+            {
+                var userName = User.Identity.Name;
+                var result = await cartRepository.RemoveFromOrder(itemId, userName);
+
+                if (result)
+                {
+                    // не работает но так задумано (если его не будет то страницу после удаления не обновится)
+                     return RedirectToAction("GetAll","Menu");
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, "Item not found in the order.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
+            }
+        }
+
     }
 }
