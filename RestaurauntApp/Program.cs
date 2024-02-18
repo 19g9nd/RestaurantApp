@@ -42,10 +42,10 @@ builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
 {
     return new MenuRepository(connectionString);
 });
-builder.Services.AddScoped<IAccountRepository, AccountRepository>(provider =>
-{
-    return new AccountRepository(connectionString);
-});
+// builder.Services.AddScoped<IAccountRepository, AccountRepository>(provider =>
+// {
+//     return new AccountRepository(connectionString);
+// });
 
 var app = builder.Build();
 

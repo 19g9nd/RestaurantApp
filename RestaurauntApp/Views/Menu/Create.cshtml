@@ -243,11 +243,11 @@
 <form method="post" enctype="multipart/form-data" action="/Menu" class="main">
     <div class="form-group">
         <label asp-for=@Name>Name:</label>
-        <input asp-for=@Name class="form-control" />
+        <input asp-for=@Name  required class="form-control" />
     </div>
     <div class="form-group">
         <label asp-for="@Description">Description:</label>
-        <input asp-for="@Description" class="form-control" />
+        <input asp-for="@Description" required class="form-control" />
     </div>
     <div class="form-group">
         <label asp-for="@Category">Category:</label>
@@ -255,11 +255,11 @@
     </div>
     <div class="checkbox-wrapper-14">
         <input asp-for="@IsVegetarian" class="switch" />
-        <label class="form-check-label" asp-for="@IsVegetarian">Is Vegetarian</label>
+        <label class="form-check-label"  asp-for="@IsVegetarian">Is Vegetarian</label>
     </div>
     <div class="form-group">
         <label asp-for="@Calories">Calories:</label>
-        <input asp-for="@Calories" class="form-control" />
+        <input  required asp-for="@Calories" class="form-control" />
     </div>
     <div>
         <label for="@ImageURL">Image:</label>
@@ -269,7 +269,7 @@
     </div>
     <div class="form-group">
         <label asp-for="@Price">Price:</label>
-        <input asp-for="@Price" class="form-control" step="0.01" />
+        <input asp-for="@Price" required class="form-control" step="0.01" />
     </div>
 
     <div class="form-group">

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
 using RestaurauntApp.DTOS;
 using RestaurauntApp.Models;
+using RestaurauntApp.Models.Other;
 using RestaurauntApp.Repositories.Base;
 
 namespace RestaurauntApp.Repositories
@@ -23,6 +24,13 @@ namespace RestaurauntApp.Repositories
             return order;
         }
 
+        public async Task<Order> GetUncompleteOrderWithItems(string userName) //для того чтобы в корзине не отображались завершенные заказы так как сущность корзины = заказу
+        {
+            var order = await context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+            return order;
+        }
         public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
         {
             try

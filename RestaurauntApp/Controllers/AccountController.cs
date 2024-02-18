@@ -10,13 +10,13 @@ namespace RestaurauntApp.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        private readonly IAccountRepository accountRepository;
+       // private readonly IAccountRepository accountRepository;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
-        public AccountController(IAccountRepository repository, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
-            this.accountRepository = repository;
+            //this.accountRepository = repository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;
@@ -36,7 +36,6 @@ namespace RestaurauntApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken] // атрибут для защиты от CSRF
         public async Task<IActionResult> Register([FromForm] UserDTO newUser)
         {
             try
@@ -53,7 +52,6 @@ namespace RestaurauntApp.Controllers
                     UserName = newUser.Name,
                 };
 
-                await accountRepository.CreateAccountAsync(newUser);
                 var result = await userManager.CreateAsync(newAccount, newUser.Password);
                 System.Console.WriteLine(result.ToString());
 

@@ -7,6 +7,5 @@ namespace RestaurauntApp.DTOS
         public decimal Price { get; set; }
         public int Quantity { get; set; }
         public int UserId { get; set; }
-        public int CartId { get; set; }
     }
 }

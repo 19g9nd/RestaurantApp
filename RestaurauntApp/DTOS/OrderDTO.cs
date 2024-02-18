@@ -1,4 +1,4 @@
-using RestaurauntApp.Models;
+using RestaurauntApp.Models.Other;
 
 namespace RestaurauntApp.DTOS
 {
@@ -9,7 +9,6 @@ namespace RestaurauntApp.DTOS
         public ICollection<OrderItemDTO> OrderItems { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime OrderDate { get; set; }
-        public string OrderNumber { get; set; }
         public EnumOrderState OrderState { get; set; }
         public decimal TotalPrice { get; set; }
     }

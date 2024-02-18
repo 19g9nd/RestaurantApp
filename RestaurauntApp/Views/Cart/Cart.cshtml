@@ -91,6 +91,64 @@
         background: url('/Assets/plus-64.ico') no-repeat;
         background-size: 60%;
     }
+
+    .btn_checkout {
+        align-items: center;
+        background-color: #EA4C89;
+        border: 2px solid #111;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        font-family: Inter, sans-serif;
+        font-size: 16px;
+        height: 48px;
+        justify-content: center;
+        line-height: 24px;
+        max-width: 100%;
+        padding: 0 25px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    .btn_checkout:after {
+        background-color: #111;
+        border-radius: 8px;
+        content: "";
+        display: block;
+        height: 48px;
+        left: 0;
+        width: 100%;
+        position: absolute;
+        top: -2px;
+        transform: translate(8px, 8px);
+        transition: transform .2s ease-out;
+        z-index: -1;
+    }
+
+    .btn_checkout:hover:after {
+        transform: translate(0, 0);
+    }
+
+    .btn_checkout:active {
+        background-color: #F082AC;
+        outline: 0;
+    }
+
+    .btn_checkout:hover {
+        outline: 0;
+    }
+
+    @@media (min-width: 768px) {
+        .btn_checkout {
+            padding: 0 40px;
+        }
+    }
 </style>
 
 <body class="main-container">
@@ -104,7 +162,7 @@
                     <th>Item Name</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Action</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -126,6 +184,11 @@
         </table>
 
         <p class="total-price">Total Price: @Model.TotalPrice</p>
+         <div style="display: flex; justify-content: center;">
+            <form asp-action="Checkout" method="Get"> 
+                <button type="submit" class="btn_checkout">Checkout</button>
+            </form>
+        </div>
     }
     else
     {

@@ -44,7 +44,7 @@ namespace RestaurauntApp.Controllers
             try
             {
                 var userName = User.Identity.Name;
-                var cart = await cartRepository.GetOrderWithItems(userName);
+                var cart = await cartRepository.GetUncompleteOrderWithItems(userName);
                 return View(cart);
             }
             catch (Exception ex)
@@ -52,6 +52,17 @@ namespace RestaurauntApp.Controllers
                 System.Console.WriteLine(ex);
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CheckoutDTO cart) 
+        {
+          return base.Ok(cart);
         }
 
         [HttpDelete]
@@ -64,7 +75,6 @@ namespace RestaurauntApp.Controllers
 
                 if (result)
                 {
-                    // не работает но так задумано (если его не будет то страницу после удаления не обновится)
                      return RedirectToAction("GetAll","Menu");
                 }
                 else
