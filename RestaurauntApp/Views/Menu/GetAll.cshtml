@@ -321,38 +321,67 @@
         }
     }
 
-  function addToCart(itemId, itemName, itemPrice) {
-    var quantity = document.getElementById("quantity").value;
-    var url = "/Cart/AddToCart";
-//идет в orderItem 
-    var data = {
-        MenuItemId: itemId,
-        Name: itemName,
-        Price: itemPrice,
-        quantity: quantity
-    };
-
-    fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to add item to cart.');
+    // Добавление товара в корзину
+    function addToCart(itemId, itemName, itemPrice) {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        var quantity = parseInt(document.getElementById("quantity").value); // Получаем количество из поля ввода и преобразуем его в число
+        var itemIndex = cartItems.findIndex(item => item.id === itemId); // Ищем индекс товара с заданным id
+        if (itemIndex !== -1) {
+            // Если товар с таким id уже есть в корзине, увеличиваем его количество
+            cartItems[itemIndex].quantity += quantity;
+        } else {
+            // Иначе добавляем новый товар в корзину
+            var item = { id: itemId, name: itemName, price: itemPrice, quantity: quantity };
+            cartItems.push(item);
         }
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
         var message = "Added " + quantity + " item(s) to cart.";
         document.getElementById("addedMessage").innerHTML = message;
         setTimeout(function () {
             document.getElementById("addedMessage").innerHTML = "";
         }, 3000);
+    }
+
+
+
+    // Получение данных о корзине
+    function getCartItems() {
+        return JSON.parse(localStorage.getItem('cartItems')) || [];
+    }
+
+    @*
+        function addToCart(itemId, itemName, itemPrice) {
+        var quantity = document.getElementById("quantity").value;
+        var url = "/Cart/AddToCart";
+        //идет в orderItem
+        var data = {
+        MenuItemId: itemId,
+        Name: itemName,
+        Price: itemPrice,
+        quantity: quantity
+        };
+
+        fetch(url, {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+        })
+        .then(response => {
+        if (!response.ok) {
+        throw new Error('Failed to add item to cart.');
+        }
+        var message = "Added " + quantity + " item(s) to cart.";
+        document.getElementById("addedMessage").innerHTML = message;
+        setTimeout(function () {
+        document.getElementById("addedMessage").innerHTML = "";
+        }, 3000);
         return response.json();
-    })
-    .catch(error => {
+        })
+        .catch(error => {
         console.error('Error:', error);
-    });
-}
+        });
+        } *@
 
 </script>

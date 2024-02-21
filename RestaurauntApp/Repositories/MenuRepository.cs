@@ -41,7 +41,9 @@ namespace RestaurauntApp.Repositories
             var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
               sql: "SELECT TOP 1 * FROM MenuItems WHERE Id = @Id",
               param: new { Id = id });
+            #pragma warning disable CS8603 // Possible null reference return.
             return menuItem;
+            #pragma warning restore CS8603 // Possible null reference return.
         }
 
 

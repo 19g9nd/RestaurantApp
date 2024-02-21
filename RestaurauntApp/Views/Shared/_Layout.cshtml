@@ -169,12 +169,12 @@
                     {
                         <a asp-area="" asp-controller="Menu" asp-action="Create">Create menu item</a>
                     }
-                    @if (this.User.Identity.IsAuthenticated == false)
+                    @if (this.User?.Identity?.IsAuthenticated == false)
                     {
                         <a asp-area="" asp-controller="Account" asp-action="Register">Register</a>
                         <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                     }
-                    @if (this.User.Identity.IsAuthenticated)
+                    @if (this.User?.Identity?.IsAuthenticated == true)
                     {
                         <a asp-area="" asp-controller="Cart" asp-action="Cart">Cart</a>
                         <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>

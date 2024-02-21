@@ -299,7 +299,6 @@ namespace RestaurauntApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("OrderId")
@@ -312,7 +311,6 @@ namespace RestaurauntApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -360,6 +358,10 @@ namespace RestaurauntApp.Migrations
 
                     b.Property<DateTime>("PickupTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

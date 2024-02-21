@@ -4,7 +4,6 @@ using RestaurauntApp.DTOS;
 using RestaurauntApp.Models;
 using RestaurauntApp.Models.Other;
 using RestaurauntApp.Repositories.Base;
-
 namespace RestaurauntApp.Repositories
 {
     public class OrderRepository : IOrderRepository
@@ -56,7 +55,7 @@ namespace RestaurauntApp.Repositories
                     Price = orderItemDTO.Price,
                     UserName = userName
                 };
-
+                System.Console.WriteLine(orderItem.Name );
                 var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
 
                 if (existingOrderItem != null)
@@ -79,53 +78,44 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
-
-        public async Task<bool> RemoveFromOrder(int itemId, string userName)
+        
+        public async Task<bool> Checkout(CheckoutDTO checkoutModel, string userName)
         {
             try
             {
-                // Поиск заказа пользователя
-                var order = await context.Orders
-                    .Include(o => o.OrderItems)
-                    .FirstOrDefaultAsync(o => o.UserName == userName);
-
-                if (order == null)
+                var checkout = new Checkout()
                 {
-                    Console.WriteLine($"Order not found for user: {userName}");
-                    return false; // Заказ не найден
-                }
-
-                // Поиск элемента заказа для удаления
-                var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.Id == itemId);
-
-                if (existingOrderItem == null)
-                {
-                    Console.WriteLine($"Item not found in the order");
-                    return false; // Элемент не найден в заказе
-                }
-
-                // Вычисление изменения в общей стоимости заказа
-                decimal totalPriceChange = existingOrderItem.Price * existingOrderItem.Quantity;
-
-                // Удаление элемента заказа
-                order.OrderItems.Remove(existingOrderItem);
-                context.OrderItems.Remove(existingOrderItem); // Удаляем из контекста, чтобы также удалить из базы данных
-
-                // Обновление общей стоимости заказа
-                order.TotalPrice -= totalPriceChange;
-
-                // Сохранение изменений
+                    Username = userName,
+                    FirstName = checkoutModel.FirstName,
+                    LastName = checkoutModel.LastName,
+                    Email = checkoutModel.Email,
+                    Phone = checkoutModel.Phone,
+                    PickupTime = checkoutModel.PickupTime,
+                    CardNumber = checkoutModel.CardNumber,
+                    CVV = checkoutModel.CVV,
+                    Expiry = checkoutModel.Expiry
+                };
+                // Добавляем чекаут в контекст базы данных
+                await context.Checkouts.AddAsync(checkout);
                 await context.SaveChangesAsync();
 
-                return true; // Успешно удалено
+                //находис заказ и меняем его статус чтобы он не отображался в корзине
+                var order = await context.Orders
+                  .Include(o => o.OrderItems)
+                  .FirstOrDefaultAsync(o => o.UserName == userName);
+                
+                order.CheckoutId = checkout.Id;
+                order.OrderState = EnumOrderState.in_process;
+                // Сохраняем изменения заказа
+                await context.SaveChangesAsync();
+
+                return true; // Успешно оформлен заказ
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error removing item from order: {ex.Message}");
-                return false;
+                Console.WriteLine(ex);
+                return false; // Ошибка при оформлении заказа
             }
         }
-
-
     }
 }

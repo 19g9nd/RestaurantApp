@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
@@ -40,7 +39,9 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
 {
+#pragma warning disable CS8604 // Possible null reference argument.
     return new MenuRepository(connectionString);
+#pragma warning restore CS8604 // Possible null reference argument.
 });
 // builder.Services.AddScoped<IAccountRepository, AccountRepository>(provider =>
 // {

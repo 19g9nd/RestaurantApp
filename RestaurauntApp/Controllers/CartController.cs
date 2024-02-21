@@ -14,11 +14,29 @@ namespace RestaurauntApp.Controllers
         {
             this.cartRepository = cartRepository;
         }
-        [HttpPost]
-        public async Task<IActionResult> AddToCart([FromBody] OrderItemDTO cartItem)
+
+
+        [HttpGet]
+        public async Task<IActionResult> Cart()
         {
             try
             {
+                var userName = User.Identity.Name;
+                var cart = await cartRepository.GetUncompleteOrderWithItems(userName);
+                return View(cart);
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddToOrder([FromBody] OrderItemDTO cartItem)
+        {
+            try
+            {
+                System.Console.WriteLine(cartItem.Name);
                 var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
 
                 var result = await cartRepository.AddToOrder(cartItem, userName);
@@ -37,22 +55,6 @@ namespace RestaurauntApp.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Cart()
-        {
-            try
-            {
-                var userName = User.Identity.Name;
-                var cart = await cartRepository.GetUncompleteOrderWithItems(userName);
-                return View(cart);
-            }
-            catch (Exception ex)
-            {
-                System.Console.WriteLine(ex);
-                return StatusCode(500, new { message = "An error occurred while processing your request." });
-            }
-        }
         [HttpGet]
         public async Task<IActionResult> Checkout()
         {
@@ -60,34 +62,32 @@ namespace RestaurauntApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Checkout(CheckoutDTO cart) 
-        {
-          return base.Ok(cart);
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> RemoveItem(int itemId)
+        public async Task<IActionResult> Checkout(CheckoutDTO cart)
         {
             try
             {
-                var userName = User.Identity.Name;
-                var result = await cartRepository.RemoveFromOrder(itemId, userName);
-
+                // Передача данных о корзине и текущем пользователе в метод Checkout репозитория
+                var result = await cartRepository.Checkout(cart, userName: User.Identity.Name);
+                System.Console.WriteLine(result);
                 if (result)
                 {
-                     return RedirectToAction("GetAll","Menu");
+                    // Если заказ успешно оформлен, перенаправляем пользователя на страницу со всем меню
+                    return RedirectToAction("GetAll", "Menu");
                 }
                 else
                 {
-                    return StatusCode((int)HttpStatusCode.BadRequest, "Item not found in the order.");
+                    // Если произошла ошибка при оформлении заказа, возвращаем BadRequest
+                    return BadRequest("Failed to checkout");
                 }
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(ex);
-                return StatusCode((int)HttpStatusCode.InternalServerError, "An error occurred while processing the request.");
+                // В случае исключения выводим сообщение об ошибке в консоль и возвращаем код 500
+                Console.WriteLine(ex);
+                return StatusCode(500, "An error occurred while processing the request.");
             }
         }
+
 
     }
 }

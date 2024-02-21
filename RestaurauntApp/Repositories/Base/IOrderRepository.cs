@@ -1,5 +1,6 @@
 using RestaurauntApp.DTOS;
 using RestaurauntApp.Models;
+using RestaurauntApp.Models.Other;
 
 namespace RestaurauntApp.Repositories.Base
 {
@@ -8,7 +9,7 @@ namespace RestaurauntApp.Repositories.Base
         Task<Order> GetUncompleteOrderWithItems(string userName);
         Task<Order> GetOrderWithItems(string userName);
         Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName);
-        Task<bool> RemoveFromOrder(int itemId, string userName);
+        Task<bool> Checkout(CheckoutDTO checkoutModel, string userName);
     }
 
 }
