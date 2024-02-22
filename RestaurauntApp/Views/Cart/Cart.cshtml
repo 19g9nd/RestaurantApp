@@ -153,6 +153,7 @@
 
 <body class="main-container">
     <h2>Cart</h2>
+    <p id="emptyCartMessage" class="empty-cart-message" style="display: none;">Your cart is empty.</p>
 
     <table class="table">
         <thead>
@@ -168,26 +169,17 @@
         </tbody>
     </table>
 
-    <p class="total-price">Total Price: <span id="totalPrice"></span></p>
+    <p id="totalPrice" class="total-price">Total Price:</p>
     <div style="display: flex; justify-content: center;">
         <form asp-action="Checkout" method="Get">
-            <button type="submit" onclick="createOrderFromCart()" class="btn_checkout">Checkout</button>
-            <button type="button" id="hiddenButton" onclick="createOrderFromCart" style="display: none;">Hidden Button</button>
+            <button type="submit" class="btn_checkout">Checkout</button>
         </form>
+
     </div>
 </body>
 
 
 <script type="text/javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-    createOrderFromCart();
-});
-
-    // Функция для очистки данных о корзине из localStorage
-    function clearCart() {
-        localStorage.removeItem('cartItems');
-    }
-
     function displayCartItems() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
         let totalPrice = 0;
@@ -195,10 +187,21 @@
         let tableBody = document.getElementById("cartItemsTableBody");
         tableBody.innerHTML = "";
 
+        let emptyCartMessage = document.getElementById("emptyCartMessage");
+        let checkoutButton = document.querySelector(".btn_checkout");
+        let table = document.querySelector(".table");
+        let totalPriceElement = document.getElementById("totalPrice");
+
         if (cartItems.length === 0) {
-            document.getElementById("emptyCartMessage").style.display = "block";
-            document.getElementById("totalPrice").innerText = totalPrice;
+            emptyCartMessage.style.display = "block";
+            checkoutButton.style.display = "none"; 
+            table.style.display = "none"; 
+            totalPriceElement.innerText = ""; 
             return;
+        } else {
+            emptyCartMessage.style.display = "none";
+            checkoutButton.style.display = "inline-block"; 
+            table.style.display = "table"; 
         }
 
         cartItems.forEach(item => {
@@ -206,23 +209,24 @@
             row.classList.add("cart-item-row");
 
             row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.quantity}</td>
-                <td>${item.price * item.quantity}</td>
-                <td>
-                    <div class="button-wrapper">
-                        <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
-                    </div>
-                </td>
-            `;
+        <td>${item.name}</td>
+        <td>${item.quantity}</td>
+        <td>${item.price * item.quantity}</td>
+        <td>
+            <div class="button-wrapper">
+                <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
+            </div>
+        </td>
+    `;
 
             tableBody.appendChild(row);
 
             totalPrice += item.price * item.quantity;
         });
 
-        document.getElementById("totalPrice").innerText = totalPrice;
+        totalPriceElement.innerText = "Total Price: " + totalPrice;
     }
+
     // Вызываем функцию отображения корзины при загрузке страницы
     displayCartItems();
 
@@ -244,7 +248,7 @@
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
         cartItems.forEach(cartItem => {
-              console.log(cartItem);
+            console.log(cartItem);
             // Создание объекта orderItemDTO на основе данных из localStorage
             let orderItemDTO = {
                 MenuItemId: cartItem.id,
@@ -273,7 +277,7 @@
         });
 
         // Очистка корзины после успешного добавления всех элементов в заказ
-       clearCart();
+        clearCart();
     }
 
 </script>

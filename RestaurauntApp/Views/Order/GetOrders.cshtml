@@ -1,0 +1,206 @@
+@model List<RestaurauntApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<style>
+    /* Table styles */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #111;
+        color: #fff;
+        border: 2px solid #444;
+    }
+
+    .table th,
+    .table td {
+        border: 2px solid #444;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #222;
+    }
+
+    /* Row styles */
+    .order-row:nth-child(even) {
+        background-color: #333;
+    }
+
+    /* Item list styles */
+    .order-items {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .order-item {
+        margin-bottom: 5px;
+    }
+       /* Стили для модального окна */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+
+    }
+
+    .modal-content {
+        background-color: #f9f9f9;
+        width: 80%;
+        max-width: 600px;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+        top: 100px;
+    }
+
+
+    .modal-close {
+        align-items: center;
+        background-color: #FFCF00;
+        border: 2px solid #111;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #111;
+        cursor: pointer;
+        display: flex;
+        font-family: Inter, sans-serif;
+        font-size: 16px;
+        height: 48px;
+        justify-content: center;
+        line-height: 24px;
+        max-width: 100%;
+        padding: 0 25px;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .modal-close:after {
+        background-color: #111;
+        border-radius: 8px;
+        content: "";
+        display: block;
+        height: 48px;
+        left: 0;
+        width: 100%;
+        position: absolute;
+        top: -2px;
+        transform: translate(8px, 8px);
+        transition: transform .2s ease-out;
+        z-index: -1;
+    }
+
+    .modal-close:hover:after {
+        transform: translate(0, 0);
+    }
+
+    .modal-close:active {
+        background-color: #ffbf00;
+        outline: 0;
+    }
+
+    .modal-close:hover {
+        outline: 0;
+    }
+
+</style>
+
+@if (Model == null || !Model.Any())
+{
+    <p style="font-size: larger; text-align:center;margin-top:20px">You don't have orders yet!</p>
+}
+else
+{
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Created At</th>
+                <th>Order Date</th>
+                <th>Order State</th>
+                <th>Total Price</th>
+                <th>Order Items</th>
+                <th>Checkout</th> <!-- New column for checkout -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr class="order-row">
+                    <td>@order.UserName</td>
+                    <td>@order.CreatedAt</td>
+                    <td>@order.OrderDate</td>
+                    <td>@order.OrderState</td>
+                    <td>@order.TotalPrice</td>
+                    <td>
+                        <ul class="order-items">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <li class="order-item">@item.Name - Quantity: @item.Quantity - Price: @item.Price</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <button onclick="openCheckoutDetails(@order.Id)">View Checkout information</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div id="checkoutDetailsModal" class="modal">
+  <div class="modal-content">
+    <!-- Сюда будет вставлен контент деталей чекаута -->
+  </div>
+</div>
+}
+
+    <script>
+    function openCheckoutDetails(orderId) {
+        console.log(orderId);
+        fetch('/Order/GetCheckoutDetails?orderid=' + orderId, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                 console.log(response);
+                    return response.text();
+                } else {
+                    throw new Error('Ошибка загрузки данных.');
+                }
+            })
+            .then(data => {
+                const modalContent = document.querySelector('#checkoutDetailsModal .modal-content');
+                modalContent.innerHTML = data;
+                modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+                const modal = document.getElementById('checkoutDetailsModal');
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки данных: ' + error);
+            });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('checkoutDetailsModal');
+        modal.style.display = 'none';
+    }
+
+
+    </script>

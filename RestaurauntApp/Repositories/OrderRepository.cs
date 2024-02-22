@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
 using RestaurauntApp.DTOS;
@@ -55,7 +56,7 @@ namespace RestaurauntApp.Repositories
                     Price = orderItemDTO.Price,
                     UserName = userName
                 };
-                System.Console.WriteLine(orderItem.Name );
+                System.Console.WriteLine(orderItem.Name);
                 var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
 
                 if (existingOrderItem != null)
@@ -78,7 +79,7 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
-        
+
         public async Task<bool> Checkout(CheckoutDTO checkoutModel, string userName)
         {
             try
@@ -103,7 +104,7 @@ namespace RestaurauntApp.Repositories
                 var order = await context.Orders
                   .Include(o => o.OrderItems)
                   .FirstOrDefaultAsync(o => o.UserName == userName);
-                
+
                 order.CheckoutId = checkout.Id;
                 order.OrderState = EnumOrderState.in_process;
                 // Сохраняем изменения заказа
@@ -117,5 +118,64 @@ namespace RestaurauntApp.Repositories
                 return false; // Ошибка при оформлении заказа
             }
         }
+        public async Task<List<Order>> GetOrdersWithItems(ClaimsPrincipal user)
+        {
+            try
+            {
+                if (user.IsInRole("Admin"))
+                {
+                    // If the user is an admin, return all orders
+                    return await context.Orders.Include(o => o.OrderItems).ToListAsync();
+                }
+                else if (user.Identity.IsAuthenticated)
+                {
+                    // If the user is authenticated but not an admin, return only their orders
+                    string userName = user.Identity.Name;
+                    return await context.Orders
+                        .Include(o => o.OrderItems)
+                        .Where(o => o.UserName == userName)
+                        .ToListAsync();
+                }
+                else
+                {
+                    // User is not authenticated, return null or handle accordingly
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving orders: {ex.Message}");
+                return null;
+            }
+        }
+        public async Task<Checkout> GetCheckoutDetails(int orderId)
+        {
+            try
+            {
+                // Находим заказ с указанным orderId
+                var order = await context.Orders
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+
+                if (order != null)
+                {
+                    // Ищем объект Checkout по CheckoutId из заказа
+                    var checkout = await context.Checkouts
+                        .FirstOrDefaultAsync(c => c.Id == order.CheckoutId);
+
+                    return checkout;
+                }
+                else
+                {
+                    // Если заказ не найден, возвращаем null
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving checkout details: {ex.Message}");
+                throw; 
+            }
+        }
+
     }
 }

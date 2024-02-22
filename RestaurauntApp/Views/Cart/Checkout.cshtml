@@ -76,8 +76,11 @@
         </div>
         <div class="form-group">
             <label for="cardNumber">Card Number:</label>
-            <input type="text" id="cardNumber" name="cardNumber" required>
+            <input type="text" id="cardNumber" name="cardNumber" maxlength="19"
+                pattern="[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}" title="Please enter a valid credit card number"
+                required>
         </div>
+
         <div class="form-group">
             <label for="cvv">CVV:</label>
             <input type="text" id="cvv" name="cvv" required>
@@ -86,8 +89,64 @@
             <label for="expiry">Expiry:</label>
             <input type="text" id="expiry" name="expiry" required>
         </div>
-        <button type="submit" class="btn_checkout">Place Order</button>
+
+        <button type="button" onclick="submitFormAndCreateOrder()" class="btn_checkout">Place Order</button>
     </form>
 
 </body>
 
+<script type="text/javascript">
+    async function submitFormAndCreateOrder() {
+        await createOrderFromCart();
+        document.querySelector('form').submit();
+    }
+
+    function clearCart() {
+        localStorage.removeItem('cartItems');
+    }
+
+    function createOrderFromCart() {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        cartItems.forEach(cartItem => {
+            let orderItemDTO = {
+                MenuItemId: cartItem.id,
+                Quantity: cartItem.quantity,
+                Name: cartItem.name,
+                Price: cartItem.price
+            };
+
+            fetch('/Cart/AddToOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderItemDTO)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Fail adding item to order');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        clearCart();
+    }
+    document.getElementById('cardNumber').addEventListener('input', function (e) {
+        let trimmedValue = e.target.value.replace(/\s+/g, ''); // Удаление всех пробелов из введенного значения
+        let formattedValue = '';
+        for (let i = 0; i < trimmedValue.length; i++) {
+            if (i > 0 && i % 4 === 0) {
+                formattedValue += ' '; // Добавление пробела после каждых четырех цифр
+            }
+            formattedValue += trimmedValue[i];
+        }
+        e.target.value = formattedValue.trim();
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "CheckoutDetails";
+     Layout = null;
+}
+@model RestaurauntApp.Models.Other.Checkout
+
+@if (Model != null)
+{
+    <h2>Checkout Details</h2>
+    <p>First Name: @Model.FirstName</p>
+    <p>Last Name: @Model.LastName</p>
+    <p>Email: @Model.Email</p>
+    <p>Phone: @Model.Phone</p>
+    <p>Pickup Time: @Model.PickupTime</p>
+    <p>Card Number: @Model.CardNumber</p>
+    <p>CVV: @Model.CVV</p>
+    <p>Expiry: @Model.Expiry</p>
+}
+else
+{
+    <p>No checkout details available.</p>
+}

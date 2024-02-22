@@ -4,7 +4,6 @@ namespace RestaurauntApp.DTOS
 {
     public class OrderDTO
     {
-        public int UserId { get; set; }
         public string UserName { get; set; }
         public ICollection<OrderItemDTO> OrderItems { get; set; }
         public DateTime CreatedAt { get; set; }

@@ -72,7 +72,7 @@ namespace RestaurauntApp.Controllers
                 if (result)
                 {
                     // Если заказ успешно оформлен, перенаправляем пользователя на страницу со всем меню
-                    return RedirectToAction("GetAll", "Menu");
+                    return RedirectToAction("Success", "Cart");
                 }
                 else
                 {
@@ -87,7 +87,9 @@ namespace RestaurauntApp.Controllers
                 return StatusCode(500, "An error occurred while processing the request.");
             }
         }
-
+        public IActionResult Success(){
+            return View();
+        }
 
     }
 }
