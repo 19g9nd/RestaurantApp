@@ -224,15 +224,46 @@
             padding: 12px 50px;
         }
     }
+      .menu-item button {
+        background-color: #080708;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    .category-filter {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .category-filter button {
+        margin: 5px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #ff4081;
+        color: white;
+    }
 </style>
 
 
 <body class="main-container">
     <h2>Menu Items</h2>
+       <div class="category-filter">
+        <button onclick="showAllItems()">Show All</button>
+        <button onclick="filterItems('pizza')">Pizza</button>
+        <button onclick="filterItems('pasta')">Pasta</button>
+        <button onclick="filterItems('drink')">Drink</button>
+        <button onclick="filterItems('salad')">Salad</button>
+    </div>
     <div class="menu-grid">
         @foreach (var menuItem in Model)
         {
-            <div class="menu-item">
+            <div class="menu-item @menuItem.Category">
                 <img src="@Url.Content(menuItem.ImageURL)" alt="@menuItem.Name" />
                 <div class="menu-item-details">
                     <h5>@menuItem.Name</h5>
@@ -343,45 +374,28 @@
     }
 
 
+    function filterItems(category) {
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            if (item.classList.contains(category)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
 
+    // Function to show all items
+    function showAllItems() {
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => {
+            item.style.display = 'block';
+        });
+    }
     // Получение данных о корзине
     function getCartItems() {
         return JSON.parse(localStorage.getItem('cartItems')) || [];
     }
 
-    @*
-        function addToCart(itemId, itemName, itemPrice) {
-        var quantity = document.getElementById("quantity").value;
-        var url = "/Cart/AddToCart";
-        //идет в orderItem
-        var data = {
-        MenuItemId: itemId,
-        Name: itemName,
-        Price: itemPrice,
-        quantity: quantity
-        };
-
-        fetch(url, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-        })
-        .then(response => {
-        if (!response.ok) {
-        throw new Error('Failed to add item to cart.');
-        }
-        var message = "Added " + quantity + " item(s) to cart.";
-        document.getElementById("addedMessage").innerHTML = message;
-        setTimeout(function () {
-        document.getElementById("addedMessage").innerHTML = "";
-        }, 3000);
-        return response.json();
-        })
-        .catch(error => {
-        console.error('Error:', error);
-        });
-        } *@
 
 </script>
