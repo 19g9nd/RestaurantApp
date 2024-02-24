@@ -39,7 +39,8 @@
     .order-item {
         margin-bottom: 5px;
     }
-       /* Стили для модального окна */
+
+    /* Стили для модального окна */
     .modal {
         display: none;
         position: fixed;
@@ -118,16 +119,17 @@
     .modal-close:hover {
         outline: 0;
     }
-
 </style>
 
 @if (Model == null || !Model.Any())
+
 {
     <p style="font-size: larger; text-align:center;margin-top:20px">You don't have orders yet!</p>
 }
-else
-{
 
+else
+
+{
     <table class="table">
         <thead>
             <tr>
@@ -137,6 +139,7 @@ else
                 <th>Order State</th>
                 <th>Total Price</th>
                 <th>Order Items</th>
+                <th>Change Order State</th>
                 <th>Checkout</th> <!-- New column for checkout -->
             </tr>
         </thead>
@@ -158,20 +161,55 @@ else
                         </ul>
                     </td>
                     <td>
+                        @if (order.OrderState != RestaurauntApp.Services.Classes.EnumOrderStateHelper.GetLastStatus())
+                        {
+                            <button onclick="updateOrderStatus(@order.Id, 'cancel')">Cancel order</button>
+                        }
+                        else
+                        {
+                            <p>Order status cannot be changed.</p>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @if (order.OrderState != RestaurauntApp.Services.Classes.EnumOrderStateHelper.GetLastStatus())
+                            {
+                                <button onclick="updateOrderStatus(@order.Id, 'next')">Next State</button>
+                            }
+                        }
+                    </td>
+                    <td>
                         <button onclick="openCheckoutDetails(@order.Id)">View Checkout information</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+
     <div id="checkoutDetailsModal" class="modal">
-  <div class="modal-content">
-    <!-- Сюда будет вставлен контент деталей чекаута -->
-  </div>
-</div>
+        <div class="modal-content">
+            <!-- Сюда будет вставлен контент деталей чекаута -->
+        </div>
+    </div>
 }
 
-    <script>
+ <script>
+    function updateOrderStatus(orderId, action) {
+        fetch('/Order/UpdateOrderStatus?orderId=' + orderId + '&action=' + action, {
+            method: 'POST'
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Обновить страницу или выполнить другие действия
+                    location.reload();
+                } else {
+                    throw new Error('Ошибка при обновлении статуса заказа.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при обновлении статуса заказа: ' + error);
+            });
+    }
+
     function openCheckoutDetails(orderId) {
         console.log(orderId);
         fetch('/Order/GetCheckoutDetails?orderid=' + orderId, {
@@ -179,7 +217,7 @@ else
         })
             .then(response => {
                 if (response.ok) {
-                 console.log(response);
+                    console.log(response);
                     return response.text();
                 } else {
                     throw new Error('Ошибка загрузки данных.');
@@ -202,5 +240,4 @@ else
         modal.style.display = 'none';
     }
 
-
-    </script>
+</script>

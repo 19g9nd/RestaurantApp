@@ -13,6 +13,8 @@ namespace RestaurauntApp.Repositories.Base
         Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName);
         Task<bool> Checkout(CheckoutDTO checkoutModel, string userName);
         Task<Checkout> GetCheckoutDetails(int orderId);
+        Task<bool> UpdateOrderStatus(int orderId);
+        Task<bool> CancelOrder(int orderId);
     }
 
 }

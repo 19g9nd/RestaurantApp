@@ -5,6 +5,7 @@ using RestaurauntApp.DTOS;
 using RestaurauntApp.Models;
 using RestaurauntApp.Models.Other;
 using RestaurauntApp.Repositories.Base;
+using RestaurauntApp.Services.Classes;
 namespace RestaurauntApp.Repositories
 {
     public class OrderRepository : IOrderRepository
@@ -173,6 +174,75 @@ namespace RestaurauntApp.Repositories
                 throw;
             }
         }
+        public async Task<bool> UpdateOrderStatus(int orderId)
+        {
+            try
+            {
+                var order = await context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
 
+                if (order == null)
+                {
+                    return false; // Заказ не найден
+                }
+
+                // Получаем индекс текущего состояния заказа в EnumOrderState
+                var currentIndex = (int)order.OrderState;
+
+                // Проверяем, является ли текущее состояние последним в EnumOrderState
+                if (currentIndex == (int)EnumOrderStateHelper.GetLastStatus())
+                {
+                    return false; // Достигнуто последнее состояние заказа
+                }
+
+                // Переходим к следующему состоянию
+                order.OrderState = (EnumOrderState)(currentIndex + 1);
+
+                await context.SaveChangesAsync();
+
+                return true; // Состояние заказа успешно обновлено
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating order status: {ex.Message}");
+                return false;
+            }
+        }
+        public async Task<bool> CancelOrder(int orderId)
+        {
+            try
+            {
+                var order = await context.Orders
+                    .Include(o => o.OrderItems) // Включаем связанные элементы заказа
+                    .FirstOrDefaultAsync(o => o.Id == orderId);
+
+                if (order != null && order.CheckoutId != null)
+                {
+                    var checkout = await context.Checkouts.FirstOrDefaultAsync(c => c.Id == order.CheckoutId);
+
+                    if (checkout != null)
+                    {
+                        context.Checkouts.Remove(checkout);
+                    }
+
+                    // Удаляем все связанные элементы заказа
+                    context.OrderItems.RemoveRange(order.OrderItems);
+
+                    context.Orders.Remove(order);
+
+                    await context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    // Заказ не найден или CheckoutId не указан
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cancelling order: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

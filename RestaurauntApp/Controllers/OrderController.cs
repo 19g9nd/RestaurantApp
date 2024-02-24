@@ -16,15 +16,44 @@ namespace RestaurauntApp.Controllers
             this.orderRepository = orderRepository;
         }
 
-        public async Task<IActionResult> GetOrders(){
+        [HttpGet]
+        public async Task<IActionResult> GetOrders()
+        {
             var user = HttpContext.User;
-            var orders =  await orderRepository.GetOrdersWithItems(user);
+            var orders = await orderRepository.GetOrdersWithItems(user);
             return View(orders);
         }
 
-        public async Task<IActionResult> GetCheckoutDetails(int orderId){
+        [HttpGet]
+        public async Task<IActionResult> GetCheckoutDetails(int orderId)
+        {
             var checkout = await orderRepository.GetCheckoutDetails(orderId);
             return View(checkout);
+        }
+
+        [HttpPost]
+        [HttpGet("UpdateOrderStatus")]
+        public async Task<IActionResult> UpdateOrderStatus([FromQuery] int orderId, [FromQuery] string action)
+        {
+            bool result = false;
+
+            if (action == "cancel")
+            {
+                result = await orderRepository.CancelOrder(orderId);
+            }
+            else if (action == "next")
+            {
+                result = await orderRepository.UpdateOrderStatus(orderId);
+            }
+
+            if (result)
+            {
+                return Ok(); // Возвращаем успешный результат
+            }
+            else
+            {
+                return BadRequest(); // Возвращаем ошибку, если действие не выполнено
+            }
         }
 
     }
