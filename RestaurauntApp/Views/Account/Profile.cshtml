@@ -5,79 +5,124 @@
 
 <title>@ViewData["Title"]</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-    }
-
-    header {
-        background-color: #333;
-        color: white;
-        text-align: center;
-        padding: 1em;
-    }
-
-    main {
-        max-width: 800px;
-        margin: 20px auto;
+    /* Profile Page Styles */
+    .profile-container {
+        max-width: 600px;
+        margin: auto;
         padding: 20px;
-        background-color: white;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 10px;
-    }
-
-    .card {
-        width: 350px;
-        height: 450px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
         text-align: center;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Change Password Popup Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
         padding: 20px;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     }
 
-    .card img {
-        width: 180px;
-        height: 180px;
-        border-radius: 50%;
-        margin-bottom: 20px;
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
     }
 
-    .card .details {
-        margin-bottom: 20px;
-    }
-
-    .card .details h2 {
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 5px;
-    }
-
-    .card .details p {
-        color: #666;
-        margin: 0;
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
 </style>
 
 <body>
-    <header>
-        <h1>@ViewData["Title"]</h1>
-    </header>
+    <div class="profile-container">
+        <h2>Welcome to Your Profile, <span style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
+        <a href="#" id="change-password-link" onclick="openChangePassword()">Change Password</a>
+        <form id="deleteForm">
+            <button type="button" class="button-50 delete-button" onclick="submitDelete()">Delete</button>
+        </form>
+    </div>
 
-    <main>
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1612428978260-2b9c7df20150?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=580&q=80"
-                alt="Image">
-            <div class="details">
-                <h2>Welcome to your profile, <span style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
-            </div>
-            <p id="info">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                labore et dolore magna aliqua.</p>
+
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <!-- Include the change password form here -->
         </div>
-    </main>
+    </div>
 </body>
+
+<script>
+    function openChangePassword() {
+        fetch('/Account/ChangePassword', { // Added comma here
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Ошибка загрузки данных.');
+                }
+            })
+            .then(data => {
+                const modalContent = document.querySelector('#change-password-modal .modal-content');
+                modalContent.innerHTML = data;
+                modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+                const modal = document.getElementById('change-password-modal');
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Ошибка загрузки данных: ' + error);
+            });
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('change-password-modal');
+        modal.style.display = 'none';
+    }
+
+    function submitDelete() {
+        if (confirm('Are you sure you want to delete profile? This action is permanent.')) {
+            var form = document.getElementById('deleteForm'); 
+            var formData = new FormData(form);
+            fetch('/Account/Delete', {
+                method: 'DELETE',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = '/Account/LogOut';
+                    } else if (response.status === 404) {
+                        alert('Account not found.');
+                    } else {
+                        alert('Failed to delete account.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    }
+
+
+</script>

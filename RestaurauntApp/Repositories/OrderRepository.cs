@@ -138,7 +138,6 @@ namespace RestaurauntApp.Repositories
                 }
                 else
                 {
-                    // User is not authenticated, return null or handle accordingly
                     return null;
                 }
             }
@@ -176,6 +175,6 @@ namespace RestaurauntApp.Repositories
                 throw; 
             }
         }
-
+       
     }
 }

@@ -21,8 +21,8 @@ public class HomeController : Controller
         return View();
     }
     
-    public IActionResult Error()
+    public IActionResult Error404()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        return View();
     }
 }

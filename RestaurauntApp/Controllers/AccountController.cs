@@ -10,7 +10,7 @@ namespace RestaurauntApp.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-       // private readonly IAccountRepository accountRepository;
+        // private readonly IAccountRepository accountRepository;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
@@ -146,6 +146,57 @@ namespace RestaurauntApp.Controllers
             }
 
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePasswordAsync(string OldPassword, string newPassword)
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            // Проверяем, является ли введенный старый пароль текущим паролем пользователя
+            var signInResult = await signInManager.CheckPasswordSignInAsync(user, OldPassword, false);
+            if (!signInResult.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Incorrect old password.");
+                return View("ChangePassword");
+            }
+            // Старый пароль верен, продолжаем смену пароля
+            var changePasswordResult = await userManager.ChangePasswordAsync(user, OldPassword, newPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                foreach (var error in changePasswordResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return View("ChangePassword");
+            }
+
+            return RedirectToAction("Profile");
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+        public async Task<IActionResult> Delete()
+        {
+            var user = await userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+            var removeAccountResult = await userManager.DeleteAsync(user);
+            if (!removeAccountResult.Succeeded)
+            {
+                var errors = removeAccountResult.Errors.Select(e => e.Description);
+                return BadRequest(new { errors });
+            }
+
+            return RedirectToActionPermanent("Index", "Home");
         }
     }
 }

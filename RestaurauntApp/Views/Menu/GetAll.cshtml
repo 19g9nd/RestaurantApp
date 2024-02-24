@@ -34,8 +34,15 @@
     }
 
     .menu-item img {
-        max-width: 150px;
-        max-height: 150px;
+        width: 150px;
+        height: 150px;
+        margin-right: 20px;
+        border-radius: 10px;
+    }
+
+    .rotate {
+        width: 150px;
+        height: 150px;
         margin-right: 20px;
         border-radius: 10px;
     }
@@ -224,7 +231,8 @@
             padding: 12px 50px;
         }
     }
-      .menu-item button {
+
+    .menu-item button {
         background-color: #080708;
         color: white;
         border: none;
@@ -248,12 +256,40 @@
         background-color: #ff4081;
         color: white;
     }
+
+    .rotate {
+        animation: spin 5s linear infinite;
+    }
+
+    @@keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    }
+
+
+    .menu-item-details {
+        flex-grow: 1;
+        overflow: hidden;
+    }
+    .menu-container {
+    display: flex;
+    flex-wrap: wrap; /* Разрешает перенос элементов на следующую строку */
+    justify-content: space-between; /* Распределение элементов по ширине контейнера */
+    padding: 0 20px; /* Отступы по бокам */
+}
+
 </style>
 
 
 <body class="main-container">
     <h2>Menu Items</h2>
-       <div class="category-filter">
+    <div class="category-filter">
         <button onclick="showAllItems()">Show All</button>
         <button onclick="filterItems('pizza')">Pizza</button>
         <button onclick="filterItems('pasta')">Pasta</button>
@@ -261,28 +297,30 @@
         <button onclick="filterItems('salad')">Salad</button>
     </div>
     <div class="menu-grid">
-        @foreach (var menuItem in Model)
-        {
-            <div class="menu-item @menuItem.Category">
-                <img src="@Url.Content(menuItem.ImageURL)" alt="@menuItem.Name" />
-                <div class="menu-item-details">
-                    <h5>@menuItem.Name</h5>
-                    <p>@menuItem.Description</p>
-                    <p><strong>Category:</strong> @menuItem.Category</p>
-                    <p><strong>Calories:</strong> @menuItem.Calories</p>
-                    <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
-                    @if (this.User.IsInRole("Admin"))
-                    {
-                        <form id="deleteForm-@menuItem.Id">
-                            <input type="hidden" name="id" value="@menuItem.Id" />
-                            <button type="button" class="button-50 delete-button"
-                                onclick="submitDelete(@menuItem.Id)">Delete</button>
-                        </form>
-                    }
-                    <a onclick="openDetails(@menuItem.Id)" class="button-50">Details</a>
-                </div>
-            </div>
-        }
+      @foreach (var menuItem in Model)
+{
+    <div class="menu-item  @(menuItem.Category)">
+        <img class="@(menuItem.Category == "pizza" ? "rotate" : "")" src="@Url.Content(menuItem.ImageURL)"
+            alt="@menuItem.Name" />
+        <div class="menu-item-details">
+            <h3>@menuItem.Name</h3>
+            <p>@menuItem.Description</p>
+            <p><strong>Category:</strong> @menuItem.Category</p>
+            <p><strong>Calories:</strong> @menuItem.Calories</p>
+            <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
+            @if (this.User.IsInRole("Admin"))
+            {
+                <form id="deleteForm-@menuItem.Id">
+                    <input type="hidden" name="id" value="@menuItem.Id" />
+                    <button type="button" class="button-50 delete-button"
+                        onclick="submitDelete(@menuItem.Id)">Delete</button>
+                </form>
+            }
+            <a onclick="openDetails(@menuItem.Id)" class="button-50">Details</a>
+        </div>
+    </div>
+}
+
     </div>
 
     <div id="productDetailsModal" class="modal">
@@ -375,10 +413,10 @@
 
 
     function filterItems(category) {
-        const menuItems = document.querySelectorAll('.menu-item');
+        const menuItems = document.querySelectorAll('.menu-item') ;
         menuItems.forEach(item => {
             if (item.classList.contains(category)) {
-                item.style.display = 'block';
+                item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
             }
@@ -389,7 +427,7 @@
     function showAllItems() {
         const menuItems = document.querySelectorAll('.menu-item');
         menuItems.forEach(item => {
-            item.style.display = 'block';
+            item.style.display = 'flex';
         });
     }
     // Получение данных о корзине

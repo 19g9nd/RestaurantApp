@@ -1,10 +1,12 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurauntApp.Repositories.Base;
 
 namespace RestaurauntApp.Controllers
 {
     [Route("[controller]/[action]")]
+    [Authorize]
     public class OrderController : Controller
     {
         private readonly IOrderRepository orderRepository;
