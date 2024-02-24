@@ -36,9 +36,10 @@ namespace RestaurauntApp.Repositories
             try
             {
                 // Проверка существует ли уже заказ у пользователя
+                // Проверка существует ли уже заказ у пользователя
                 var order = await context.Orders
                    .Include(o => o.OrderItems)
-                   .FirstOrDefaultAsync(o => o.UserName == userName);
+                   .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
 
 
                 if (order == null)
@@ -102,14 +103,13 @@ namespace RestaurauntApp.Repositories
 
                 //находис заказ и меняем его статус чтобы он не отображался в корзине
                 var order = await context.Orders
-                  .Include(o => o.OrderItems)
-                  .FirstOrDefaultAsync(o => o.UserName == userName);
+             .Include(o => o.OrderItems)
+             .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
 
                 order.CheckoutId = checkout.Id;
                 order.OrderState = EnumOrderState.in_process;
                 // Сохраняем изменения заказа
                 await context.SaveChangesAsync();
-
                 return true; // Успешно оформлен заказ
             }
             catch (Exception ex)
@@ -124,12 +124,10 @@ namespace RestaurauntApp.Repositories
             {
                 if (user.IsInRole("Admin"))
                 {
-                    // If the user is an admin, return all orders
                     return await context.Orders.Include(o => o.OrderItems).ToListAsync();
                 }
                 else if (user.Identity.IsAuthenticated)
                 {
-                    // If the user is authenticated but not an admin, return only their orders
                     string userName = user.Identity.Name;
                     return await context.Orders
                         .Include(o => o.OrderItems)
@@ -172,9 +170,9 @@ namespace RestaurauntApp.Repositories
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving checkout details: {ex.Message}");
-                throw; 
+                throw;
             }
         }
-       
+
     }
 }
