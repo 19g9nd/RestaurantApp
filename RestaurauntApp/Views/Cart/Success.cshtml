@@ -70,8 +70,10 @@
         .button-container .nb-button {
             margin: 0 5px;
         }
-        h1{
-            color: #000000; /* Изменяем цвет заголовка */
+
+        h1 {
+            color: #000000;
+            /* Изменяем цвет заголовка */
         }
     </style>
 </head>
@@ -83,10 +85,15 @@
             <p>Congratulations! You are one step closer to amazing food.</p>
             <p>We have received your order and it will be processed soon!</p>
             <div class="button-container">
-                <button class="nb-button green">OK</button>
+                <button class="nb-button green" onclick="redirectToOrders()">OK</button>
             </div>
         </div>
     </div>
 </body>
 
 </html>
+<script type="text/javascript">
+    function redirectToOrders() {
+        window.location.href = '/order/GetOrders';
+    }
+</script>

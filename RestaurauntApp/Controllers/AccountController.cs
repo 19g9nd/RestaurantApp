@@ -14,7 +14,6 @@ namespace RestaurauntApp.Controllers
         private readonly RoleManager<IdentityRole> roleManager;
         public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
-            //this.accountRepository = repository;
             this.userManager = userManager;
             this.signInManager = signInManager;
             this.roleManager = roleManager;

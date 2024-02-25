@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurauntApp.DTOS;
 using RestaurauntApp.Repositories.Base;
+using RestaurauntApp.Services.Base;
 #pragma warning disable CS8602,CS8604
 
 namespace RestaurauntApp.Controllers
@@ -11,17 +12,27 @@ namespace RestaurauntApp.Controllers
     [Authorize]
     public class CartController : Controller
     {
-        private readonly IOrderRepository cartRepository;
+        private readonly IOrderService cartService; 
 
-        public CartController(IOrderRepository cartRepository)
+        public CartController(IOrderService cartService)
         {
-            this.cartRepository = cartRepository;
+            this.cartService = cartService;
         }
 
         [HttpGet]
-        public IActionResult Cart()
+        public async Task<IActionResult> Cart()
         {
-            return View();
+            try
+            {
+                var userName = User.Identity.Name;
+                var cart = await cartService.GetUncompleteOrder(userName);
+                return View(cart);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return StatusCode(500, new { message = "An error occurred while processing your request." });
+            }
         }
 
         [HttpPost]
@@ -32,7 +43,7 @@ namespace RestaurauntApp.Controllers
                 Console.WriteLine(cartItem.Name);
                 var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
 
-                var result = await cartRepository.AddToOrder(cartItem, userName);
+                var result = await cartService.AddToOrder(cartItem, userName);
                 if (result)
                 {
                     return RedirectToAction("GetAll", "Menu");
@@ -58,11 +69,17 @@ namespace RestaurauntApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutDTO cart)
         {
+            if (!ModelState.IsValid)
+            {
+                // Если модель не проходит валидацию, вернуть текущее представление с ошибками валидации
+                return View(cart);
+            }
+
             try
             {
                 // Передача данных о корзине и текущем пользователе в метод Checkout репозитория
-                var result = await cartRepository.Checkout(cart, userName: User.Identity.Name);
-                System.Console.WriteLine(result);
+                var result = await cartService.CreateCheckout(cart, userName: User.Identity.Name);
+                Console.WriteLine(result);
                 if (result)
                 {
                     // Если заказ успешно оформлен, перенаправляем пользователя на страницу со всем меню
@@ -70,17 +87,17 @@ namespace RestaurauntApp.Controllers
                 }
                 else
                 {
-                    // Если произошла ошибка при оформлении заказа, возвращаем BadRequest
-                    return BadRequest("Failed to checkout");
+                    // view с ошибкой
+                    return View("Checkout");
                 }
             }
             catch (Exception ex)
             {
-                // В случае исключения выводим сообщение об ошибке в консоль и возвращаем код 500
                 Console.WriteLine(ex);
                 return StatusCode(500, "An error occurred while processing the request.");
             }
         }
+
         public IActionResult Success()
         {
             return View();

@@ -13,6 +13,7 @@ namespace RestaurauntApp.Repositories
         }
         public async Task<int> CreateMenuItemAsync(MenuItemDTO newMenuItem)
         {
+
             var rowsAffected = await connection.ExecuteAsync(
                   @"INSERT INTO MenuItems (Name, Description, Category, IsVegetarian, Calories, ImageURL, Price) 
                   VALUES (@Name, @Description, @Category, @IsVegetarian, @Calories, @ImageURL, @Price)",
@@ -41,9 +42,9 @@ namespace RestaurauntApp.Repositories
             var menuItem = await connection.QueryFirstOrDefaultAsync<MenuItem>(
               sql: "SELECT TOP 1 * FROM MenuItems WHERE Id = @Id",
               param: new { Id = id });
-            #pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8603 // Possible null reference return.
             return menuItem;
-            #pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
 
@@ -53,7 +54,7 @@ namespace RestaurauntApp.Repositories
                 @"UPDATE MenuItems
                   SET Name = @Name, Description = @Description, Category = @Category, 
                       IsVegetarian = @IsVegetarian, Calories = @Calories, 
-                      ImageURL = @ImageURL, Price = @Price
+                      Price = @Price
                   WHERE Id = @Id",
                 param: new
                 {
@@ -62,7 +63,6 @@ namespace RestaurauntApp.Repositories
                     menuItemToUpdate.Category,
                     menuItemToUpdate.IsVegetarian,
                     menuItemToUpdate.Calories,
-                    menuItemToUpdate.ImageURL,
                     menuItemToUpdate.Price,
                     Id = id
                 });

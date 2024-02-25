@@ -41,22 +41,10 @@ namespace RestaurauntApp.Repositories
 
         public async Task<Order> GetUncompleteOrderWithItems(string userName) //для того чтобы в корзине не отображались завершенные заказы так как сущность корзины = заказу
         {
-            try
-            {
-                var order = await context.Orders
-                    .Include(o => o.OrderItems)
-                    .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
-                if (order == null)
-                {
-                    throw new ArgumentNullException();
-                }
-                return order;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw new InvalidOperationException();
-            }
+            var order = await context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+            return order;
         }
         public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
         {
@@ -121,7 +109,7 @@ namespace RestaurauntApp.Repositories
                     Phone = checkoutModel.Phone,
                     PickupTime = checkoutModel.PickupTime,
                     CardNumber = checkoutModel.CardNumber,
-                    CVV = checkoutModel.CVV,
+                    CVV = Convert.ToInt32(checkoutModel.CVV),
                     Expiry = checkoutModel.Expiry
                 };
                 // Добавляем чекаут в контекст базы данных
@@ -135,6 +123,7 @@ namespace RestaurauntApp.Repositories
 
                 order.CheckoutId = checkout.Id;
                 order.OrderState = EnumOrderState.in_process;
+                order.OrderDate = DateTime.Now;
                 // Сохраняем изменения заказа
                 await context.SaveChangesAsync();
                 return true; // Успешно оформлен заказ

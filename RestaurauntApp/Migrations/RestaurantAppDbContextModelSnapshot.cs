@@ -328,9 +328,8 @@ namespace RestaurauntApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CVV")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CVV")
+                        .HasColumnType("int");
 
                     b.Property<string>("CardNumber")
                         .IsRequired()

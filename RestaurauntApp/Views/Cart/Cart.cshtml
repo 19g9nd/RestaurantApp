@@ -84,7 +84,7 @@
 
     }
 
-   .minusBtn {
+    .minusBtn {
         font-size: 30px;
         font-weight: bolder;
         color: #ff1493;
@@ -270,7 +270,13 @@
         let index = cartItems.findIndex(item => item.id === parseInt(itemId));
         if (index !== -1) {
             // Найден элемент в корзине
-            cartItems[index].quantity -= 1;
+            if (cartItems[index].quantity > 1) {
+                cartItems[index].quantity -= 1;
+            }
+            else {
+
+                removeItem(itemId);
+            }
             localStorage.setItem('cartItems', JSON.stringify(cartItems));
             window.location.reload();
         } else {

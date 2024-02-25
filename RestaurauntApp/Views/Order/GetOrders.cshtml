@@ -1,4 +1,6 @@
 @model List<RestaurauntApp.Models.Order>
+@using System.ComponentModel.DataAnnotations
+@using RestaurauntApp.Models.Other
 
 @{
     ViewData["Title"] = "Orders";
@@ -119,6 +121,50 @@
     .modal-close:hover {
         outline: 0;
     }
+
+    .button-28 {
+        appearance: none;
+        background-color: transparent;
+        border: 2px solid #dfdfdf;
+        border-radius: 15px;
+        box-sizing: border-box;
+        color: #dddddd;
+        cursor: pointer;
+        display: inline-block;
+        font-family: Roobert, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size: 16px;
+        font-weight: 600;
+        line-height: normal;
+        margin: 0;
+        min-height: 60px;
+        min-width: 0;
+        outline: none;
+        padding: 16px 24px;
+        text-align: center;
+        text-decoration: none;
+        transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        width: 100%;
+        will-change: transform;
+    }
+
+    .button-28:disabled {
+        pointer-events: none;
+    }
+
+    .button-28:hover {
+        color: #fff;
+        background-color: #1A1A1A;
+        box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
+        transform: translateY(-2px);
+    }
+
+    .button-28:active {
+        box-shadow: none;
+        transform: translateY(0);
+    }
 </style>
 
 @if (Model == null || !Model.Any())
@@ -140,7 +186,7 @@ else
                 <th>Total Price</th>
                 <th>Order Items</th>
                 <th>Change Order State</th>
-                <th>Checkout</th> <!-- New column for checkout -->
+                <th>Checkout</th>
             </tr>
         </thead>
         <tbody>
@@ -150,7 +196,7 @@ else
                     <td>@order.UserName</td>
                     <td>@order.CreatedAt</td>
                     <td>@order.OrderDate</td>
-                    <td>@order.OrderState</td>
+                    <td>@order.OrderState.GetDisplayName()</td>
                     <td>@order.TotalPrice</td>
                     <td>
                         <ul class="order-items">
@@ -162,23 +208,28 @@ else
                     </td>
                     <td>
                         @if (order.OrderState != RestaurauntApp.Services.Classes.EnumOrderStateHelper.GetLastStatus())
+
                         {
-                            <button onclick="updateOrderStatus(@order.Id, 'cancel')">Cancel order</button>
+                            <button class="button-28" onclick="updateOrderStatus(@order.Id, 'cancel')">Cancel order</button>
                         }
+
                         else
+
                         {
                             <p>Order status cannot be changed.</p>
                         }
                         @if (User.IsInRole("Admin"))
+
                         {
                             @if (order.OrderState != RestaurauntApp.Services.Classes.EnumOrderStateHelper.GetLastStatus())
+
                             {
-                                <button onclick="updateOrderStatus(@order.Id, 'next')">Next State</button>
+                                <button class="button-28" onclick="updateOrderStatus(@order.Id, 'next')">Next State</button>
                             }
                         }
                     </td>
                     <td>
-                        <button onclick="openCheckoutDetails(@order.Id)">View Checkout information</button>
+                        <button class="button-28" onclick="openCheckoutDetails(@order.Id)">View Checkout information</button>
                     </td>
                 </tr>
             }

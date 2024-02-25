@@ -310,6 +310,8 @@
             <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
             @if (this.User.IsInRole("Admin"))
             {
+                  <button type="button" class="button-50 delete-button"
+                        onclick="UpdateItem(@menuItem.Id)">Change</button>
                 <form id="deleteForm-@menuItem.Id">
                     <input type="hidden" name="id" value="@menuItem.Id" />
                     <button type="button" class="button-50 delete-button"
@@ -339,6 +341,29 @@
 
 
 <script>
+    function UpdateItem(itemId) {
+    fetch('/menu/edit/' + itemId, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.text();
+        } else {
+            throw new Error('Failed to load item for editing.');
+        }
+    })
+    .then(data => {
+        const modalContent = document.querySelector('#productDetailsModal .modal-content');
+        modalContent.innerHTML = data;
+        modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+        const modal = document.getElementById('productDetailsModal');
+        modal.style.display = 'block';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
     function openDetails(menuItemId) {
         fetch('/menu/GetDetails?id=' + menuItemId, {
             method: 'GET'

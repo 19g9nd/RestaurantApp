@@ -12,11 +12,12 @@ namespace RestaurauntApp.Models
         public EnumOrderState OrderState { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }
         public int CheckoutId { get; set; }
-
+        
         public Order()
         {
             OrderItems = new List<OrderItem>();
             CreatedAt = DateTime.Now;
+            OrderDate = DateTime.Now;
             TotalPrice = 0;
             OrderState = EnumOrderState.waiting;
         }

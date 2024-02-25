@@ -8,7 +8,7 @@ namespace RestaurauntApp.DTOS
         public required string Phone { get; set; }
         public DateTime PickupTime { get; set; }
         public required string CardNumber { get; set; }
-        public required string CVV { get; set; }
+        public required int CVV { get; set; }
         public required string Expiry { get; set; }
     }
 }

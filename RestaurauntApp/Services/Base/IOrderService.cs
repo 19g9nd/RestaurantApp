@@ -14,5 +14,6 @@ namespace RestaurauntApp.Services.Base
         Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName);
         Task<bool> CreateCheckout(CheckoutDTO checkoutModel, string userName);
         Task<Checkout> GetCheckoutDetails(int orderId);
+        Task<bool> UpdateOrderStatus(int orderId,string action);
     }
 }

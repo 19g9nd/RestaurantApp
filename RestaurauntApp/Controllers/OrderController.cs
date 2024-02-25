@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestaurauntApp.Repositories.Base;
+using RestaurauntApp.Services.Base;
 
 namespace RestaurauntApp.Controllers
 {
@@ -9,50 +9,47 @@ namespace RestaurauntApp.Controllers
     [Authorize]
     public class OrderController : Controller
     {
-        private readonly IOrderRepository orderRepository;
-
-        public OrderController(IOrderRepository orderRepository)
+        private readonly IOrderService orderService;
+        public OrderController(IOrderService orderService)
         {
-            this.orderRepository = orderRepository;
+            this.orderService = orderService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOrders()
         {
             var user = HttpContext.User;
-            var orders = await orderRepository.GetOrdersWithItems(user);
+            var orders = await orderService.GetOrders(user);
             return View(orders);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetCheckoutDetails(int orderId)
         {
-            var checkout = await orderRepository.GetCheckoutDetails(orderId);
+            var checkout = await orderService.GetCheckoutDetails(orderId);
             return View(checkout);
         }
 
         [HttpPost]
-        [HttpGet("UpdateOrderStatus")]
+        // [HttpGet("UpdateOrderStatus")]
         public async Task<IActionResult> UpdateOrderStatus([FromQuery] int orderId, [FromQuery] string action)
         {
-            bool result = false;
-
-            if (action == "cancel")
+         try
             {
-                result = await orderRepository.CancelOrder(orderId);
+                var result = await orderService.UpdateOrderStatus(orderId, action);
+                if (result)
+                {
+                    return Ok(); // Возвращаем успешный результат
+                }
+                else
+                {
+                    return BadRequest(); // Возвращаем ошибку, если действие не выполнено
+                }
             }
-            else if (action == "next")
+            catch (Exception ex)
             {
-                result = await orderRepository.UpdateOrderStatus(orderId);
-            }
-
-            if (result)
-            {
-                return Ok(); // Возвращаем успешный результат
-            }
-            else
-            {
-                return BadRequest(); // Возвращаем ошибку, если действие не выполнено
+                Console.WriteLine(ex);
+                return StatusCode(500, "An error occurred while processing the request.");
             }
         }
 
