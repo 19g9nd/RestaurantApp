@@ -62,35 +62,37 @@
     }
 
     .button-wrapper {
-        display: inline-block;
-        width: 48px;
-        height: 30px;
-        margin-right: 5px;
+        width: 70px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .remove_cmpl_btn {
-        display: inline-block;
         width: 48px;
         height: 30px;
-        background: url('/Assets/delete-64.ico') no-repeat;
-        background-size: 60%;
+        background: url('/Assets/delete.ico') no-repeat;
+        background-size: 100%;
     }
 
-    .remove_btn {
-        display: inline-block;
-        width: 48px;
-        height: 30px;
-        background: url('/Assets/minus-7-64.ico') no-repeat;
-        background-size: 70%;
+    .plusBtn {
+        font-size: 30px;
+        font-weight: bolder;
+        margin-right: 5px;
+        background-size: 60%;
+        color: #ff1493;
+
     }
 
-    .add_btn {
-        display: inline-block;
-        width: 48px;
-        height: 30px;
-        background: url('/Assets/plus-64.ico') no-repeat;
-        background-size: 60%;
+   .minusBtn {
+        font-size: 30px;
+        font-weight: bolder;
+        color: #ff1493;
+        margin-right: 5px;
+        text-align: center;
     }
+
+    .add_btn {}
 
     .btn_checkout {
         align-items: center;
@@ -194,14 +196,14 @@
 
         if (cartItems.length === 0) {
             emptyCartMessage.style.display = "block";
-            checkoutButton.style.display = "none"; 
-            table.style.display = "none"; 
-            totalPriceElement.innerText = ""; 
+            checkoutButton.style.display = "none";
+            table.style.display = "none";
+            totalPriceElement.innerText = "";
             return;
         } else {
             emptyCartMessage.style.display = "none";
-            checkoutButton.style.display = "inline-block"; 
-            table.style.display = "table"; 
+            checkoutButton.style.display = "inline-block";
+            table.style.display = "table";
         }
 
         cartItems.forEach(item => {
@@ -212,11 +214,13 @@
         <td>${item.name}</td>
         <td>${item.quantity}</td>
         <td>${item.price * item.quantity}</td>
-        <td>
-            <div class="button-wrapper">
-                <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
-            </div>
-        </td>
+<td>
+    <div class="button-wrapper">
+        <span class="plusBtn" onclick="plusItem('${item.id}')">+</span>
+        <span class="minusBtn" onclick="minusItem('${item.id}')">-</span>
+        <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
+    </div>
+</td>
     `;
 
             tableBody.appendChild(row);
@@ -244,6 +248,37 @@
         }
     }
 
+    function plusItem(itemId) {
+        console.log("Item ID to add:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+        console.log("Item ID in cartItems to add:", index);
+
+        if (index !== -1) {
+            // Найден элемент в корзине
+            cartItems[index].quantity += 1; // Увеличиваем количество товара на 1
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            window.location.reload();
+        } else {
+            // Элемент не найден в корзине
+            console.log("Item not found in cartItems");
+        }
+    }
+    function minusItem(itemId) {
+        console.log("Item ID to minus:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+        if (index !== -1) {
+            // Найден элемент в корзине
+            cartItems[index].quantity -= 1;
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            window.location.reload();
+        } else {
+            // Элемент не найден в корзине
+            console.log("Item not found in cartItems");
+        }
+    }
+
     function createOrderFromCart() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
@@ -258,7 +293,6 @@
             };
             console.log(orderItemDTO);
             console.log(JSON.stringify({ orderItemDTO: orderItemDTO }));
-            // Вызов метода AddToOrder для добавления элемента корзины в заказ
             fetch('/Cart/AddToOrder', {
                 method: 'POST',
                 headers: {

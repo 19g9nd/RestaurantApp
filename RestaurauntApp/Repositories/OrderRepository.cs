@@ -6,6 +6,8 @@ using RestaurauntApp.Models;
 using RestaurauntApp.Models.Other;
 using RestaurauntApp.Repositories.Base;
 using RestaurauntApp.Services.Classes;
+#pragma warning disable CS8602
+
 namespace RestaurauntApp.Repositories
 {
     public class OrderRepository : IOrderRepository
@@ -19,18 +21,42 @@ namespace RestaurauntApp.Repositories
 
         public async Task<Order> GetOrderWithItems(string userName)
         {
-            var order = await context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserName == userName);
-            return order;
+            try
+            {
+                var order = await context.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.UserName == userName);
+                if (order == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                return order;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw new InvalidOperationException();
+            }
         }
 
         public async Task<Order> GetUncompleteOrderWithItems(string userName) //для того чтобы в корзине не отображались завершенные заказы так как сущность корзины = заказу
         {
-            var order = await context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
-            return order;
+            try
+            {
+                var order = await context.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+                if (order == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                return order;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw new InvalidOperationException();
+            }
         }
         public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
         {
@@ -129,7 +155,13 @@ namespace RestaurauntApp.Repositories
                 }
                 else if (user.Identity.IsAuthenticated)
                 {
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                     string userName = user.Identity.Name;
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                    if (userName == null)
+                    {
+                        throw new ArgumentNullException("userName is empty.");
+                    }
                     return await context.Orders
                         .Include(o => o.OrderItems)
                         .Where(o => o.UserName == userName)
@@ -137,13 +169,13 @@ namespace RestaurauntApp.Repositories
                 }
                 else
                 {
-                    return null;
+                    throw new ArgumentException();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error retrieving orders: {ex.Message}");
-                return null;
+                throw;
             }
         }
         public async Task<Checkout> GetCheckoutDetails(int orderId)
@@ -159,13 +191,15 @@ namespace RestaurauntApp.Repositories
                     // Ищем объект Checkout по CheckoutId из заказа
                     var checkout = await context.Checkouts
                         .FirstOrDefaultAsync(c => c.Id == order.CheckoutId);
-
+                    if (checkout == null)
+                    {
+                        throw new ArgumentNullException("checkout doesnt exist");
+                    }
                     return checkout;
                 }
                 else
                 {
-                    // Если заказ не найден, возвращаем null
-                    return null;
+                    throw new ArgumentNullException();
                 }
             }
             catch (Exception ex)
@@ -215,7 +249,7 @@ namespace RestaurauntApp.Repositories
                     .Include(o => o.OrderItems) // Включаем связанные элементы заказа
                     .FirstOrDefaultAsync(o => o.Id == orderId);
 
-                if (order != null && order.CheckoutId != null)
+                if (order != null && order.CheckoutId != 0)
                 {
                     var checkout = await context.Checkouts.FirstOrDefaultAsync(c => c.Id == order.CheckoutId);
 

@@ -98,9 +98,9 @@
         <p>Price: $@Model.Price</p>
         <p>Category: @Model.Category</p>
         <p><strong>Is Vegetarian:</strong> @(Model.IsVegetarian ? "Yes" : "No")</p>
+        @if (User?.Identity?.IsAuthenticated == true) {
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" value="1" min="1" class="price-tag" />
-        @if (User?.Identity?.IsAuthenticated == true) {
         <button class="button-56" onclick="addToCart(@Model.Id,'@Model.Name',@Model.Price)">Add to Cart</button>
         }
         <div id="addedMessage" style="color: green;"></div>

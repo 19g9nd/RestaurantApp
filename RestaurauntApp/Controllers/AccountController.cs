@@ -3,14 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using RestaurauntApp.DTOS;
-using RestaurauntApp.Repositories.Base;
-
+#pragma warning disable CS8602
 namespace RestaurauntApp.Controllers
 {
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
-        // private readonly IAccountRepository accountRepository;
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
