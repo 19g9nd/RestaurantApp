@@ -12,7 +12,7 @@ namespace RestaurauntApp.Controllers
     [Authorize]
     public class CartController : Controller
     {
-        private readonly IOrderService cartService; 
+        private readonly IOrderService cartService;
 
         public CartController(IOrderService cartService)
         {
@@ -36,22 +36,17 @@ namespace RestaurauntApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToOrder([FromBody] OrderItemDTO cartItem)
+        public async Task<IActionResult> AddToOrder([FromBody] List<OrderItemDTO> cartItems)
         {
             try
             {
-                Console.WriteLine(cartItem.Name);
-                var userName = User.Identity.Name; // получаем имя пользователя для связи с таблицей
-
-                var result = await cartService.AddToOrder(cartItem, userName);
-                if (result)
+                var userName = User.Identity.Name;
+                foreach (var cartItem in cartItems)
                 {
-                    return RedirectToAction("GetAll", "Menu");
+                    Console.WriteLine(cartItem.Name);
+                    await cartService.AddToOrder(cartItem, userName);
                 }
-                else
-                {
-                    return BadRequest(new { message = "Failed to add item to cart." });
-                }
+                return Ok(); 
             }
             catch (Exception ex)
             {
@@ -59,6 +54,7 @@ namespace RestaurauntApp.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
         }
+
 
         [HttpGet]
         public IActionResult Checkout()

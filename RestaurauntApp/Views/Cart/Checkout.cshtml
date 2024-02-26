@@ -126,34 +126,64 @@
         localStorage.removeItem('cartItems');
     }
 
-    function createOrderFromCart() {
+    @* function createOrderFromCart() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
         cartItems.forEach(cartItem => {
-            let orderItemDTO = {
-                MenuItemId: cartItem.id,
-                Quantity: cartItem.quantity,
-                Name: cartItem.name,
-                Price: cartItem.price
-            };
+        let orderItemDTO = {
+        MenuItemId: cartItem.id,
+        Quantity: cartItem.quantity,
+        Name: cartItem.name,
+        Price: cartItem.price
+        };
 
-            fetch('/Cart/AddToOrder', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderItemDTO)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Fail adding item to order');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+        fetch('/Cart/AddToOrder', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderItemDTO)
+        })
+        .then(response => {
+        if (!response.ok) {
+        throw new Error('Fail adding item to order');
+        }
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
         });
 
         clearCart();
-    }
+        } *@
+        async function createOrderFromCart() {
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let orderItems = [];
+
+            // Convert cart items to order items
+            cartItems.forEach(cartItem => {
+                let orderItemDTO = {
+                    MenuItemId: cartItem.id,
+                    Quantity: cartItem.quantity,
+                    Name: cartItem.name,
+                    Price: cartItem.price
+                };
+                orderItems.push(orderItemDTO);
+            });
+
+            try {
+                await fetch('/Cart/AddToOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderItems)
+                });
+                clearCart();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+
 </script>
