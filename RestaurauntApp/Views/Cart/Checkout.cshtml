@@ -1,0 +1,188 @@
+@model RestaurauntApp.Models.Other.Checkout
+@{
+    ViewData["Title"] = "Checkout";
+}
+<style>
+    form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="datetime-local"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button.btn_checkout {
+        width: 100%;
+        background-color: #EA4C89;
+        border: 2px solid #111;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 10px 0;
+        transition: background-color 0.3s ease;
+    }
+
+    button.btn_checkout:hover {
+        background-color: #ff4081;
+    }
+
+    .validator {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+
+<body class="main-container">
+
+    <form asp-action="Checkout" method="post" id="checkoutForm">
+        <h1 style="margin: 0 auto; padding: 10px; text-align: center;">@ViewData["Title"]</h1>
+        <div class="form-group">
+            <label asp-for="FirstName">First Name:</label>
+            <input asp-for="FirstName" type="text" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="LastName">Last Name:</label>
+            <input asp-for="LastName" type="text" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email">Email:</label>
+            <input asp-for="Email" type="email" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone">Phone:</label>
+            <input asp-for="Phone" type="tel" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="PickupTime">Pick-up Time:</label>
+            <input asp-for="PickupTime" type="datetime-local" id="pickupTime" required
+                min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")">
+        </div>
+        <div class="form-group">
+            <label asp-for="CardNumber">Card Number:</label>
+            <input type="text" asp-for="CardNumber" id="cardNumber" maxlength="19"
+                pattern="[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}\s?[0-9]{4}" title="Please enter a valid credit card number"
+                required>
+        </div>
+        <div class="form-group">
+            <label asp-for="CVV">CVV:</label>
+            <input type="text" asp-for="CVV" id="cvv" pattern="\d{3}" title="Please enter exactly 3 digits" required>
+        </div>
+        <div class="form-group">
+            <label asp-for="Expiry">Expiry:</label>
+            <input type="text" id="expiry" asp-for="Expiry" required>
+        </div>
+
+        <div asp-validation-summary="All" class="validator"></div>
+        <button type="submit" class="btn_checkout">Place Order</button>
+    </form>
+
+</body>
+<script type="text/javascript">
+    document.getElementById('checkoutForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        if (!event.target.checkValidity()) {
+            return;
+        }
+
+        // Отправка формы после создания заказа из корзины
+        await submitFormAndCreateOrder();
+    });
+
+    // Функция для отправки формы после создания заказа из корзины
+    async function submitFormAndCreateOrder() {
+        // Создаем заказ из корзины 
+        await createOrderFromCart();
+        // Отправляем форму
+        document.getElementById('checkoutForm').submit();
+    }
+
+    function clearCart() {
+        localStorage.removeItem('cartItems');
+    }
+
+    @* function createOrderFromCart() {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        cartItems.forEach(cartItem => {
+        let orderItemDTO = {
+        MenuItemId: cartItem.id,
+        Quantity: cartItem.quantity,
+        Name: cartItem.name,
+        Price: cartItem.price
+        };
+
+        fetch('/Cart/AddToOrder', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderItemDTO)
+        })
+        .then(response => {
+        if (!response.ok) {
+        throw new Error('Fail adding item to order');
+        }
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+        });
+
+        clearCart();
+        } *@
+        async function createOrderFromCart() {
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let orderItems = [];
+
+            // Convert cart items to order items
+            cartItems.forEach(cartItem => {
+                let orderItemDTO = {
+                    MenuItemId: cartItem.id,
+                    Quantity: cartItem.quantity,
+                    Name: cartItem.name,
+                    Price: cartItem.price
+                };
+                orderItems.push(orderItemDTO);
+            });
+
+            try {
+                await fetch('/Cart/AddToOrder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderItems)
+                });
+                clearCart();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+
+</script>

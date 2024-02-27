@@ -1,0 +1,323 @@
+@model RestaurauntApp.Models.Order
+
+@{
+    ViewData["Title"] = "Cart";
+}
+
+<style>
+    /* Стили для основного контейнера */
+    .main-container {
+        background-color: #f2f2f2;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        max-height: fit-content;
+    }
+
+    /* Стили для заголовка страницы */
+    h2 {
+        text-align: center;
+        padding: 20px;
+        color: #ff4081;
+        font-size: 28px;
+    }
+
+    /* Стили для сообщения о пустой корзине */
+    .empty-cart-message {
+        font-style: italic;
+        color: #777;
+        text-align: center;
+    }
+
+    /* Стили для таблицы */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        margin-bottom: 20px;
+    }
+
+    .table th,
+    .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    .table th {
+        background-color: #f2f2f2;
+    }
+
+    /* Стили для строки с итемами корзины */
+    .cart-item-row {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Стили для общей цены */
+    .total-price {
+        text-align: right;
+        font-weight: bold;
+        margin-right: 20px;
+        color: #f90099;
+    }
+
+    .button-wrapper {
+        width: 70px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .remove_cmpl_btn {
+        width: 48px;
+        height: 30px;
+        background: url('/Assets/delete.ico') no-repeat;
+        background-size: 100%;
+    }
+
+    .plusBtn {
+        font-size: 30px;
+        font-weight: bolder;
+        margin-right: 5px;
+        background-size: 60%;
+        color: #ff1493;
+
+    }
+
+    .minusBtn {
+        font-size: 30px;
+        font-weight: bolder;
+        color: #ff1493;
+        margin-right: 5px;
+        text-align: center;
+    }
+
+    .add_btn {}
+
+    .btn_checkout {
+        align-items: center;
+        background-color: #EA4C89;
+        border: 2px solid #111;
+        border-radius: 8px;
+        box-sizing: border-box;
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        font-family: Inter, sans-serif;
+        font-size: 16px;
+        height: 48px;
+        justify-content: center;
+        line-height: 24px;
+        max-width: 100%;
+        padding: 0 25px;
+        position: relative;
+        text-align: center;
+        text-decoration: none;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    .btn_checkout:after {
+        background-color: #111;
+        border-radius: 8px;
+        content: "";
+        display: block;
+        height: 48px;
+        left: 0;
+        width: 100%;
+        position: absolute;
+        top: -2px;
+        transform: translate(8px, 8px);
+        transition: transform .2s ease-out;
+        z-index: -1;
+    }
+
+    .btn_checkout:hover:after {
+        transform: translate(0, 0);
+    }
+
+    .btn_checkout:active {
+        background-color: #F082AC;
+        outline: 0;
+    }
+
+    .btn_checkout:hover {
+        outline: 0;
+    }
+
+    @@media (min-width: 768px) {
+        .btn_checkout {
+            padding: 0 40px;
+        }
+    }
+</style>
+
+<body class="main-container">
+    <h2>Cart</h2>
+    <p id="emptyCartMessage" class="empty-cart-message" style="display: none;">Your cart is empty.</p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="cartItemsTableBody">
+            <!-- Элементы корзины будут добавлены сюда динамически -->
+        </tbody>
+    </table>
+
+    <p id="totalPrice" class="total-price">Total Price:</p>
+    <div style="display: flex; justify-content: center;">
+        <form asp-action="Checkout" method="Get">
+            <button type="submit" class="btn_checkout">Checkout</button>
+        </form>
+
+    </div>
+</body>
+
+
+<script type="text/javascript">
+    function displayCartItems() {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let totalPrice = 0;
+
+        let tableBody = document.getElementById("cartItemsTableBody");
+        tableBody.innerHTML = "";
+
+        let emptyCartMessage = document.getElementById("emptyCartMessage");
+        let checkoutButton = document.querySelector(".btn_checkout");
+        let table = document.querySelector(".table");
+        let totalPriceElement = document.getElementById("totalPrice");
+
+        if (cartItems.length === 0) {
+            emptyCartMessage.style.display = "block";
+            checkoutButton.style.display = "none";
+            table.style.display = "none";
+            totalPriceElement.innerText = "";
+            return;
+        } else {
+            emptyCartMessage.style.display = "none";
+            checkoutButton.style.display = "inline-block";
+            table.style.display = "table";
+        }
+
+        cartItems.forEach(item => {
+            let row = document.createElement("tr");
+            row.classList.add("cart-item-row");
+
+            row.innerHTML = `
+        <td>${item.name}</td>
+        <td>${item.quantity}</td>
+        <td>${item.price * item.quantity}</td>
+<td>
+    <div class="button-wrapper">
+        <span class="plusBtn" onclick="plusItem('${item.id}')">+</span>
+        <span class="minusBtn" onclick="minusItem('${item.id}')">-</span>
+        <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
+    </div>
+</td>
+    `;
+
+            tableBody.appendChild(row);
+
+            totalPrice += item.price * item.quantity;
+        });
+
+        totalPriceElement.innerText = "Total Price: " + totalPrice;
+    }
+
+    // Вызываем функцию отображения корзины при загрузке страницы
+    displayCartItems();
+
+    function removeItem(itemId) {
+        console.log("Item ID to remove:", itemId);
+        if (confirm('Are you sure you want to delete this item?')) {
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+            console.log("Item ID in cartItems to remove:", index);
+            if (index !== -1) {
+                cartItems.splice(index, 1);
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                window.location.reload();
+            }
+        }
+    }
+
+    function plusItem(itemId) {
+        console.log("Item ID to add:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+        console.log("Item ID in cartItems to add:", index);
+
+        if (index !== -1) {
+            // Найден элемент в корзине
+            cartItems[index].quantity += 1; // Увеличиваем количество товара на 1
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            window.location.reload();
+        } else {
+            // Элемент не найден в корзине
+            console.log("Item not found in cartItems");
+        }
+    }
+    function minusItem(itemId) {
+        console.log("Item ID to minus:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+        if (index !== -1) {
+            // Найден элемент в корзине
+            if (cartItems[index].quantity > 1) {
+                cartItems[index].quantity -= 1;
+            }
+            else {
+
+                removeItem(itemId);
+            }
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            window.location.reload();
+        } else {
+            // Элемент не найден в корзине
+            console.log("Item not found in cartItems");
+        }
+    }
+
+    function createOrderFromCart() {
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+
+        cartItems.forEach(cartItem => {
+            console.log(cartItem);
+            // Создание объекта orderItemDTO на основе данных из localStorage
+            let orderItemDTO = {
+                MenuItemId: cartItem.id,
+                Quantity: cartItem.quantity,
+                Name: cartItem.name,
+                Price: cartItem.price
+            };
+            console.log(orderItemDTO);
+            console.log(JSON.stringify({ orderItemDTO: orderItemDTO }));
+            fetch('/Cart/AddToOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderItemDTO)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Fail adding item to order');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // Очистка корзины после успешного добавления всех элементов в заказ
+        clearCart();
+    }
+
+</script>
