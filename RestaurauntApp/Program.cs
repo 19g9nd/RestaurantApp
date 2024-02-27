@@ -18,7 +18,6 @@ builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
-    //options.User.RequireUniqueEmail = true;
     options.Password = new PasswordOptions
     {
         RequireDigit = false,
@@ -46,10 +45,7 @@ builder.Services.AddScoped<IMenuRepository, MenuRepository>(provider =>
     return new MenuRepository(connectionString);
 #pragma warning restore CS8604 // Possible null reference argument.
 });
-// builder.Services.AddScoped<IAccountRepository, AccountRepository>(provider =>
-// {
-//     return new AccountRepository(connectionString);
-// });
+
 
 var app = builder.Build();
 
