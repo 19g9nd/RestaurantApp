@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+      background-color: #242227;
+    }
+
+    .container {
+      max-width: 100%; /* Ensures responsiveness */
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      color: white;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px; /* Added spacing between elements */
+    }
+
+    #map-container {
+      width: 600px;
+      height: 450px;
+      border: 1px solid #fb00a8; /* Adjusted border thickness */
+      border-radius: 10px;
+      overflow: hidden;
+      /* Centered with flexbox */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #map-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 5px;
+      color: white;
+      font-size: 24px; /* Increased font size */
+    }
+
+    .contact-info {
+      text-align: left;
+      color: rgb(255, 255, 255);
+      margin-right: 20px;
+      /* Centered with flexbox */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px; /* Added spacing between info elements */
+    }
+
+    .address {
+      color: #999999;
+      font-style: italic;
+    }
+    </style>
+</head>
+
+<body>
+    <h1>Contact Us</h1>
+    <div id="container">
+        <div class="contact-info">
+            <p><strong>Phone:</strong> +123456789</p>
+            <p><strong>Email:</strong> example@example.com</p>
+            <p class="address">1234 Main Street, City, Country, 12345</p>
+        </div>
+        <div id="map-container">
+            <iframe id="map-iframe"
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3037.679230741153!2d49.85250983198826!3d40.415956314785525!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x403087fbef6b3dfb%3A0xc32b1d5765759234!2sSTEP%20IT%20Komp%C3%BCter%20Akademiyas%C4%B1%20Darnagul!5e0!3m2!1sru!2sus!4v1709640612919!5m2!1sru!2sus"
+                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+</body>
+
+</html>

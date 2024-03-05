@@ -277,13 +277,31 @@
         flex-grow: 1;
         overflow: hidden;
     }
-    .menu-container {
-    display: flex;
-    flex-wrap: wrap; /* Разрешает перенос элементов на следующую строку */
-    justify-content: space-between; /* Распределение элементов по ширине контейнера */
-    padding: 0 20px; /* Отступы по бокам */
-}
 
+    .menu-container {
+        display: flex;
+        flex-wrap: wrap;
+        /* Разрешает перенос элементов на следующую строку */
+        justify-content: space-between;
+        /* Распределение элементов по ширине контейнера */
+        padding: 0 20px;
+        /* Отступы по бокам */
+    }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 10px;
+        justify-content: space-between;
+
+    }
+
+    .menu-item {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 </style>
 
 
@@ -297,31 +315,30 @@
         <button onclick="filterItems('salad')">Salad</button>
     </div>
     <div class="menu-grid">
-      @foreach (var menuItem in Model)
-{
-    <div class="menu-item  @(menuItem.Category)">
-        <img class="@(menuItem.Category == "pizza" ? "rotate" : "")" src="@Url.Content(menuItem.ImageURL)"
-            alt="@menuItem.Name" />
-        <div class="menu-item-details">
-            <h3>@menuItem.Name</h3>
-            <p>@menuItem.Description</p>
-            <p><strong>Category:</strong> @menuItem.Category</p>
-            <p><strong>Calories:</strong> @menuItem.Calories</p>
-            <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
-            @if (this.User.IsInRole("Admin"))
-            {
-                  <button type="button" class="button-50 delete-button"
-                        onclick="UpdateItem(@menuItem.Id)">Change</button>
-                <form id="deleteForm-@menuItem.Id">
-                    <input type="hidden" name="id" value="@menuItem.Id" />
-                    <button type="button" class="button-50 delete-button"
-                        onclick="submitDelete(@menuItem.Id)">Delete</button>
-                </form>
-            }
-            <a onclick="openDetails(@menuItem.Id)" class="button-50">Details</a>
-        </div>
-    </div>
-}
+        @foreach (var menuItem in Model)
+        {
+            <div class="menu-item  @(menuItem.Category)">
+                <img class="@(menuItem.Category == "pizza" ? "rotate" : "")" src="@Url.Content(menuItem.ImageURL)"
+                    alt="@menuItem.Name" />
+                <div class="menu-item-details">
+                    <h3>@menuItem.Name</h3>
+                    <p>@menuItem.Description</p>
+                    <p><strong>Category:</strong> @menuItem.Category</p>
+                    <p><strong>Calories:</strong> @menuItem.Calories</p>
+                    <p><strong>Price:</strong> @string.Format("{0:C}", menuItem.Price)</p>
+                    @if (this.User.IsInRole("Admin"))
+                    {
+                        <button type="button" class="button-50 delete-button" onclick="UpdateItem(@menuItem.Id)">Change</button>
+                        <form id="deleteForm-@menuItem.Id">
+                            <input type="hidden" name="id" value="@menuItem.Id" />
+                            <button type="button" class="button-50 delete-button"
+                                onclick="submitDelete(@menuItem.Id)">Delete</button>
+                        </form>
+                    }
+                    <a onclick="openDetails(@menuItem.Id)" class="button-50">Details</a>
+                </div>
+            </div>
+        }
 
     </div>
 
@@ -342,27 +359,27 @@
 
 <script>
     function UpdateItem(itemId) {
-    fetch('/menu/edit/' + itemId, {
-        method: 'GET'
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.text();
-        } else {
-            throw new Error('Failed to load item for editing.');
-        }
-    })
-    .then(data => {
-        const modalContent = document.querySelector('#productDetailsModal .modal-content');
-        modalContent.innerHTML = data;
-        modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
-        const modal = document.getElementById('productDetailsModal');
-        modal.style.display = 'block';
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
+        fetch('/menu/edit/' + itemId, {
+            method: 'GET'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to load item for editing.');
+                }
+            })
+            .then(data => {
+                const modalContent = document.querySelector('#productDetailsModal .modal-content');
+                modalContent.innerHTML = data;
+                modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+                const modal = document.getElementById('productDetailsModal');
+                modal.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
 
     function openDetails(menuItemId) {
         fetch('/menu/GetDetails?id=' + menuItemId, {
@@ -438,7 +455,7 @@
 
 
     function filterItems(category) {
-        const menuItems = document.querySelectorAll('.menu-item') ;
+        const menuItems = document.querySelectorAll('.menu-item');
         menuItems.forEach(item => {
             if (item.classList.contains(category)) {
                 item.style.display = 'flex';
