@@ -231,10 +231,12 @@
 </style>
 
 <body>
-     <div style="margin-top:50px;" class="profile-container">
+    <div style="margin-top:50px;" class="profile-container">
         <div style="background-color: #f0f0f0; padding: 20px; border-radius: 8px; margin-bottom: 20px;margin-top:20px;">
-            <h2 style="margin: 0; color: #333;">Welcome to Your Profile, <span style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
-            <p style="font-size: 1.1rem; margin-top: 10px;">We're glad to have you here. Explore your profile and feel free to make any changes you need.</p>
+            <h2 style="margin: 0; color: #333;">Welcome to Your Profile, <span
+                    style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
+            <p style="font-size: 1.1rem; margin-top: 10px;">We're glad to have you here. Explore your profile and feel
+                free to make any changes you need.</p>
         </div>
 
         <button class="pushable" onclick="openChangePassword()">
@@ -244,9 +246,9 @@
                 Change Password
             </span>
         </button>
-
         <form id="deleteForm">
-            <button class="button-82-pushable" onclick="submitDelete()" role="button">
+            <!-- Button with custom styles -->
+            <button class="button-82-pushable delete-button" onclick="submitDelete()" type="button" role="button">
                 <span class="button-82-shadow"></span>
                 <span class="button-82-edge"></span>
                 <span class="button-82-front text">
@@ -255,19 +257,18 @@
             </button>
         </form>
     </div>
-
+    </div>
 
     <div id="change-password-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <!-- Include the change password form here -->
         </div>
     </div>
 </body>
 
 <script>
     function openChangePassword() {
-        fetch('/Account/ChangePassword', { // Added comma here
+        fetch('/Account/ChangePassword', {
             method: 'GET'
         })
             .then(response => {
@@ -316,6 +317,8 @@
                 });
         }
     }
+
+</script>
 
 
 </script>

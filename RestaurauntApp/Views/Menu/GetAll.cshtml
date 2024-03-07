@@ -9,7 +9,7 @@
 <style>
     /* Style for the main container */
     .main-container {
-        background-color: #f2f2f2;
+        background-color: #201a1b;
         color: #333;
         margin: 0;
         padding: 0;
@@ -20,7 +20,7 @@
     h2 {
         text-align: center;
         padding: 20px;
-        color: #ff4081;
+        color: #ebe0e1;
         font-size: 28px;
     }
 
@@ -29,8 +29,11 @@
         display: flex;
         align-items: center;
         padding: 20px;
-        border-bottom: 1px solid #ddd;
-        background-color: #fff;
+        border-bottom: 1px solid #422931;
+        background-color: #422931;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     .menu-item img {
@@ -55,11 +58,14 @@
         font-size: 24px;
         margin: 0;
     }
+    .menu-item h3{
+        color: #f2dde1;
+    }
 
     .menu-item p {
         font-size: 16px;
         margin: 5px 0;
-        color: #666;
+        color: #ebe0e1;
     }
 
     .menu-item strong {
@@ -97,6 +103,9 @@
     }
 
     /* Стили для модального окна */
+    .details-container h2{
+        color: #000;
+    }
     .modal {
         display: none;
         position: fixed;
@@ -109,7 +118,7 @@
     }
 
     .modal-content {
-        background-color: #f9f9f9;
+        background-color: #e0e0e0;
         width: 80%;
         max-width: 600px;
         margin: 100px auto;
@@ -130,7 +139,6 @@
         color: #111;
         cursor: pointer;
         display: flex;
-        font-family: Inter, sans-serif;
         font-size: 16px;
         height: 48px;
         justify-content: center;
@@ -178,17 +186,15 @@
 
     .button-50 {
         appearance: button;
-        background-color: #f5006a;
-        color: white;
+        background-color: #7b2949;
         background-image: none;
         border: 1px solid #000;
         border-radius: 4px;
-        box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
+        box-shadow: #ffd9e2 4px 4px 0 0, #000000 4px 4px 0 1px;
         box-sizing: border-box;
-        color: #fff;
+        color: #ffd9e2;
         cursor: pointer;
         display: inline-block;
-        font-family: ITCAvantGardeStd-Bk, Arial, sans-serif;
         font-size: 14px;
         font-weight: 400;
         line-height: 20px;
@@ -218,7 +224,7 @@
     }
 
     .button-50:not([disabled]):active {
-        box-shadow: #d0ff00 2px 2px 0 0, #000 2px 2px 0 1px;
+        box-shadow: #3e001d 2px 2px 0 0, #000 2px 2px 0 1px;
         transform: translate(2px, 2px);
     }
 
@@ -296,12 +302,6 @@
 
     }
 
-    .menu-item {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
 </style>
 
 

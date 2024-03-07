@@ -146,6 +146,7 @@ namespace RestaurauntApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> ChangePasswordAsync(string OldPassword, string newPassword)
         {
             var user = await userManager.GetUserAsync(User);
@@ -175,11 +176,13 @@ namespace RestaurauntApp.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
-        public async Task<IActionResult> Delete()
+
+       public async Task<IActionResult> Delete()
         {
             var user = await userManager.GetUserAsync(User);
             if (user == null)
@@ -197,3 +200,4 @@ namespace RestaurauntApp.Controllers
         }
     }
 }
+ 
