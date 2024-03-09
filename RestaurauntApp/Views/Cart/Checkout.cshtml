@@ -93,7 +93,8 @@
         </div>
         <div class="form-group">
             <label asp-for="Expiry">Expiry:</label>
-            <input type="text" id="expiry" asp-for="Expiry" required>
+            <input type="text" id="expiry" placeholder="MM/YY" required pattern="\d{2}:\d{2}" id="expiry"
+                asp-for="Expiry" required>
         </div>
 
         <div asp-validation-summary="All" class="validator"></div>
@@ -124,65 +125,51 @@
     function clearCart() {
         localStorage.removeItem('cartItems');
     }
+    var expiryInput = document.getElementById('expiry');
 
-    @* function createOrderFromCart() {
+    // Добавляем обработчик события изменения для элемента ввода даты
+    expiryInput.addEventListener('input', function (event) {
+        // Получаем введенное значение
+        var inputValue = event.target.value;
+
+        // Удаляем все нецифровые символы из введенной строки
+        var cleanedInput = inputValue.replace(/\D/g, '');
+
+        // Форматируем введенное значение в MM/YY формат (если оно имеет подходящую длину)
+        if (cleanedInput.length >= 3) {
+            var formattedInput = cleanedInput.substring(0, 2) + '/' + cleanedInput.substring(2, 4);
+            expiryInput.value = formattedInput;
+        }
+    });
+
+    async function createOrderFromCart() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let orderItems = [];
 
+        // Convert cart items to order items
         cartItems.forEach(cartItem => {
-        let orderItemDTO = {
-        MenuItemId: cartItem.id,
-        Quantity: cartItem.quantity,
-        Name: cartItem.name,
-        Price: cartItem.price
-        };
-
-        fetch('/Cart/AddToOrder', {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(orderItemDTO)
-        })
-        .then(response => {
-        if (!response.ok) {
-        throw new Error('Fail adding item to order');
-        }
-        })
-        .catch(error => {
-        console.error('Error:', error);
-        });
+            let orderItemDTO = {
+                MenuItemId: cartItem.id,
+                Quantity: cartItem.quantity,
+                Name: cartItem.name,
+                Price: cartItem.price
+            };
+            orderItems.push(orderItemDTO);
         });
 
-        clearCart();
-        } *@
-        async function createOrderFromCart() {
-            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-            let orderItems = [];
-
-            // Convert cart items to order items
-            cartItems.forEach(cartItem => {
-                let orderItemDTO = {
-                    MenuItemId: cartItem.id,
-                    Quantity: cartItem.quantity,
-                    Name: cartItem.name,
-                    Price: cartItem.price
-                };
-                orderItems.push(orderItemDTO);
+        try {
+            await fetch('/Cart/AddToOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderItems)
             });
-
-            try {
-                await fetch('/Cart/AddToOrder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderItems)
-                });
-                clearCart();
-            } catch (error) {
-                console.error('Error:', error);
-            }
+            clearCart();
+        } catch (error) {
+            console.error('Error:', error);
         }
+    }
 
 
 </script>

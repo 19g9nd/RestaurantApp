@@ -165,6 +165,10 @@
         box-shadow: none;
         transform: translateY(0);
     }
+
+    body {
+        background-color: #201a1b;
+    }
 </style>
 
 @if (Model == null || !Model.Any())
@@ -243,7 +247,7 @@ else
     </div>
 }
 
- <script>
+<script>
     function updateOrderStatus(orderId, action) {
         fetch('/Order/UpdateOrderStatus?orderId=' + orderId + '&action=' + action, {
             method: 'POST'

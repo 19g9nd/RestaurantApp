@@ -5,13 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>@ViewData["Title"] - RestaurantApp</title>
 
+<!-- Layout.cshtml -->
+<link href="~/css/Menu/GetAll/light.css" rel="stylesheet" type="text/css" data-page="Menu/GetAll" />
+<link href="~/css/Menu/Create/light.css" rel="stylesheet" type="text/css" data-page="Menu/Create" />
+<link href="~/css/Cart/Checkout/light.css" rel="stylesheet" type="text/css" data-page="Cart/Checkout" />
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-<link href="https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide" rel="stylesheet">
+<link href="https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide"
+    rel="stylesheet">
 @RenderSection("Styles", required: false)
 
 <style>
     @@import url(https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide);
+
     /* Reset default margin and padding */
     body,
     h1,
@@ -177,10 +184,13 @@
                     @if (this.User?.Identity?.IsAuthenticated == true)
                     {
                         <a asp-area="" asp-controller="Cart" asp-action="Cart">Cart</a>
-                         <a asp-area="" asp-controller="Order" asp-action="GetOrders">Orders</a>
+                        <a asp-area="" asp-controller="Order" asp-action="GetOrders">Orders</a>
                         <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
                         <a asp-area="" asp-controller="Account" asp-action="LogOut">Logout</a>
                     }
+                    <button onclick="changeTheme('dark')">Dark Theme</button>
+                    <button onclick="changeTheme('light')">Light Theme</button>
+
                 </div>
             </nav>
         </header>
@@ -197,3 +207,61 @@
 </footer>
 
 </html>
+<script>
+@* function changeTheme(theme) {
+    var styleSheetName = theme === 'dark' ? 'dark.css' : 'light.css';
+
+    // Получаем ссылки на элементы <link>, подключающие стили для страницы 'getAll'
+    var allPageStyles = document.querySelectorAll('link[href*="Menu/GetAll/"]');
+
+    // Пройдемся по всем найденным элементам и отключим их
+    allPageStyles.forEach(function(style) {
+        style.disabled = true;
+    });
+
+    // Создаем новый элемент <link>, который будет подключать новый CSS файл для выбранной темы
+    var newStyle = document.createElement('link');
+    newStyle.setAttribute('rel', 'stylesheet');
+    newStyle.setAttribute('type', 'text/css');
+    newStyle.setAttribute('href', '/css/Menu/GetAll/' + styleSheetName);
+
+    // Вставляем новый элемент <link> в head документа
+    document.head.appendChild(newStyle);
+} *@
+
+function changeTheme(theme) {
+    var styleSheetName = theme === 'dark' ? 'dark.css' : 'light.css';
+
+    // Получаем ссылки на все элементы <link>, подключающие стили для страницы
+    var allPageStyles = document.querySelectorAll('link[rel="stylesheet"][type="text/css"]');
+
+    // Перебираем все найденные элементы <link> и меняем их href на новый путь к CSS файлу
+    allPageStyles.forEach(function(style) {
+        var oldPath = style.getAttribute('href'); // Получаем текущий путь к CSS файлу
+        var basePath = oldPath.split('/').slice(0, -1).join('/') + '/'; // Получаем начальный путь к CSS файлу
+        var newPath = basePath + styleSheetName; // Формируем новый путь к CSS файлу
+        style.href = newPath; // Устанавливаем новый путь к CSS файлу
+    });
+
+    // Сохраняем выбранную тему в cookie
+    document.cookie = "theme=" + theme + ";path=/";
+}
+
+// Функция для чтения значения cookie
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
+// При загрузке страницы применяем сохраненную тему (если она есть)
+window.onload = function() {
+    var savedTheme = getCookie("theme");
+    if (savedTheme) {
+        changeTheme(savedTheme);
+    }
+};
+
+
+
+</script>
