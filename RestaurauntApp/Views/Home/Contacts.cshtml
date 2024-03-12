@@ -1,47 +1,66 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Simple Map</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABLKrylxg-nSdQlts2dq5S8XICUIXaHN4&callback=initMap" async defer></script>
-    <script>
-      let map;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 40.414953, lng: 49.853042 },
-          zoom: 12,
-          styles: [
-            {
-              "elementType": "geometry",
-              "stylers": [
-                {
-                  "color": "#ebe3cd"
-                }
-              ]
-            },
-            {
-              "elementType": "geometry.fill",
-              "stylers": [
-                {
-                  "color": "#009CA6" // Изумрудный цвет
-                }
-              ],
-              "featureType": "water" // Применить только к элементам типа water
-            },
-         
-          ]
-        });
-        
-        // Добавление маркера
-        const stepItAcademyLocation = { lat: 40.410279, lng: 49.842957 };
-        new google.maps.Marker({
-          position: stepItAcademyLocation,
-          map: map,
-          title: 'Step IT Academy Baku' // Название маркера
-        });
-      }
-    </script>
-  </head>
-  <body>
-    <div id="map" style="height: 400px; width: 100%;"></div>
-  </body>
+
+<head>
+  <title>Simple Map</title>
+  <link href="@Url.Content("~/css/Home/Contacts/light.css")" rel="stylesheet" type="text/css" />
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABLKrylxg-nSdQlts2dq5S8XICUIXaHN4&callback=initMap"
+    async defer></script>
+  <script>
+    let map;
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 40.4149444, lng: 49.8530556 },
+        zoom: 12,
+        styles: [
+          {
+            "elementType": "geometry",
+            "stylers": [
+              {
+                "color": "#ebe3cd"
+              }
+            ]
+          },
+          {
+            "elementType": "geometry.fill",
+            "stylers": [
+              {
+                "color": "#009CA6" // Изумрудный цвет
+              }
+            ],
+            "featureType": "water" // Применить только к элементам типа water
+          },
+        ]
+      });
+
+      // Добавление маркера ресторана
+      const restaurantLocation = { lat: 40.409704, lng: 49.867435 };
+      const restaurantMarker = new google.maps.Marker({
+        position: restaurantLocation,
+        map: map,
+        title: 'Pizza Haven' // Название ресторана
+      });
+
+      // Создание информационного окна о ресторане
+      const restaurantInfoWindow = new google.maps.InfoWindow({
+        content: '<div id="restaurant-info"><h2 style="color:red;">Pizza Haven</h2><p>Address: Street Name, City, Country</p><p>Phone: +994 12 345 67 89</p></div>'
+      });
+
+      // Открытие информационного окна при щелчке на маркере
+      restaurantMarker.addListener('click', function () {
+        restaurantInfoWindow.open(map, restaurantMarker);
+      });
+    }
+  </script>
+</head>
+
+<body class="mapBody">
+  <div id="map-container">
+    <div id="map"></div>
+    <p class="fakeInfo">Fake Address: 123 Fake Street, Faketown, FK 12345</p>
+    <p class="fakeInfo">Contact: fakeemail@example.com, Phone: +123 456 7890</p>
+    <p class="fakeInfo">Made with ❤</p>
+  </div>
+</body>
+
 </html>

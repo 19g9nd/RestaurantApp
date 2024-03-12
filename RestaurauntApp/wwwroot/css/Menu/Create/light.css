@@ -10,6 +10,35 @@ body {
     padding: 20px;
   }
   
+  .form-control {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    width: 220px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: 2px solid black; 
+  }
+ /* Добавляем обводку к элементам списка выбора */
+.form-control option {
+  border: 1px solid #a69cec; /* Цвет и толщина обводки */
+  border-radius: 4px; /* Закругление углов */
+  padding: 8px 15px; /* Отступы внутри элемента списка */
+  cursor: pointer;
+}
+
+  /* Apply dropdown styles */
+  .form-control:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(136, 148, 255, 0.5);
+  }
+  
   .main {
     display: flex;
     flex-direction: column;

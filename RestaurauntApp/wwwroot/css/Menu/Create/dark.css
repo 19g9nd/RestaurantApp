@@ -24,7 +24,7 @@ body {
     margin: 0 auto;
     padding: 20px;
     background-color: #514347;
-    border: 1px solid #ddd;
+    border: 1px solid #20191e;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   }
@@ -45,7 +45,7 @@ body {
   input[type="number"] {
     width: 100%;
     padding: 8px;
-    border: 1px solid #ccc;
+    border: 1px solid #150808;
     border-radius: 3px;
   }
 
@@ -104,14 +104,35 @@ body {
     cursor: pointer;
     display: inline-block;
   }
+  .form-control {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.4;
+    color: #fff;
+    background-color: #1f2029;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    width: 220px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: 2px solid black; 
+  }
 
+  /* Apply dropdown styles */
+  .form-control:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 235, 167, 0.5);
+  }
+  
   @supports (-webkit-appearance: none) or (-moz-appearance: none) {
     .checkbox-wrapper-14 input[type=checkbox] {
-      --active: #275EFE;
+      --active: #ffd000;
       --active-inner: #fff;
-      --focus: 2px rgba(39, 94, 254, .3);
-      --border: #BBC1E1;
-      --border-hover: #275EFE;
+      --focus: 2px rgba(254, 164, 39, 0.3);
+      --border: #e1d7bb;
+      --border-hover: #fef327;
       --background: #fff;
       --disabled: #F6F8FF;
       --disabled-inner: #E1E6F9;

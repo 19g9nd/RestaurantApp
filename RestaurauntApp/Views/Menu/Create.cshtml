@@ -11,6 +11,7 @@
   string? Category = string.Empty;
 
 }
+
 <link href="@Url.Content("~/css/Menu/Create/light.css")" rel="stylesheet" type="text/css" />
 
 <h1 class="title">@ViewData["Title"]</h1>
@@ -23,14 +24,16 @@
     <label asp-for="@Description">Description:</label>
     <input asp-for="@Description" required class="form-control" />
   </div>
-  <div class="form-group">
-    <label asp-for="@Category">Category:</label>
-    <select asp-for="@Category" class="form-control">
-      <option value="pizza">Pizza</option>
-      <option value="pasta">Pasta</option>
-      <option value="drink">Drink</option>
-      <option value="salad">Salad</option>
-    </select>
+  <div class="sec-center">
+    <label class="for-dropdown" asp-for="@Category" for="dropdown">Category: <i class="uil uil-arrow-down"></i></label>
+    <div class="section-dropdown">
+      <select asp-for="@Category" class="form-control">
+        <option value="pizza">Pizza</option>
+        <option value="pasta">Pasta</option>
+        <option value="drink">Drink</option>
+        <option value="salad">Salad</option>
+      </select>
+    </div>
   </div>
 
   <div class="checkbox-wrapper-14">
@@ -49,7 +52,7 @@
   </div>
   <div class="form-group">
     <label asp-for="@Price">Price:</label>
-    <input asp-for="@Price" required class="form-control" step="0.01" />
+    <input asp-for="@Price" required class="form-control" />
   </div>
 
   <div class="form-group">
