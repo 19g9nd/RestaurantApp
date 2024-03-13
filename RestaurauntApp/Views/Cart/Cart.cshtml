@@ -23,8 +23,16 @@
             <!-- Элементы корзины будут добавлены сюда динамически -->
         </tbody>
     </table>
+    <!-- Discount code input field -->
+    <div>
+        <label for="discountCode">Enter Discount Code:</label>
+        <input type="text" id="discountCode" name="discountCode">
+        <button onclick="applyDiscount()">Apply</button>
+    </div>
 
     <p id="totalPrice" class="total-price">Total Price:</p>
+
+
     <div style="display: flex; justify-content: center;">
         <form asp-action="Checkout" method="Get">
             <button type="submit" class="btn_checkout">Checkout</button>
@@ -75,9 +83,7 @@
     </div>
 </td>
     `;
-
             tableBody.appendChild(row);
-
             totalPrice += item.price * item.quantity;
         });
 
@@ -140,7 +146,6 @@
 
     function createOrderFromCart() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-
         cartItems.forEach(cartItem => {
             console.log(cartItem);
             // Создание объекта orderItemDTO на основе данных из localStorage
@@ -171,6 +176,11 @@
 
         // Очистка корзины после успешного добавления всех элементов в заказ
         clearCart();
+    }
+
+    function applyDiscount() {
+        let discountCode = document.getElementById("discountCode").value;
+        confirm("Discount code entered: " + discountCode);
     }
 
 </script>

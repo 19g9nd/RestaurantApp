@@ -267,5 +267,44 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> ApplyDiscount(string discountCode, string userName)
+        {
+            try
+            {
+                var order = await context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+                if (order == null)
+                {
+                    return false;
+                }
+                Dictionary<string, decimal> discountCodes = new Dictionary<string, decimal>
+        {
+            { "OFF10", 0.1m }, // 10% discount
+            { "SALE20", 0.2m } // 20% discount
+        };
+                if (discountCodes.ContainsKey(discountCode))
+                {
+                    decimal discountPercentage = discountCodes[discountCode];
+                    decimal discountAmount = order.TotalPrice * discountPercentage;
+                    order.TotalPrice -= discountAmount;
+
+                    await context.SaveChangesAsync();
+                    return true; 
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error applying discount: {ex.Message}");
+                return false;
+            }
+        }
+
     }
 }

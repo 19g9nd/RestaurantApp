@@ -15,6 +15,7 @@ namespace RestaurauntApp.Repositories.Base
         Task<Checkout> GetCheckoutDetails(int orderId);
         Task<bool> UpdateOrderStatus(int orderId);
         Task<bool> CancelOrder(int orderId);
+        Task<bool> ApplyDiscount(string discountCode, string userName);
     }
 
 }

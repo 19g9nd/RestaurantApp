@@ -13,10 +13,12 @@ namespace RestaurauntApp.Controllers
     public class CartController : Controller
     {
         private readonly IOrderService cartService;
+        private readonly IOrderRepository cartRepository;
 
-        public CartController(IOrderService cartService)
+        public CartController(IOrderService cartService,IOrderRepository cartRepository)
         {
             this.cartService = cartService;
+            this.cartRepository = cartRepository;
         }
 
         [HttpGet]
@@ -46,7 +48,7 @@ namespace RestaurauntApp.Controllers
                     Console.WriteLine(cartItem.Name);
                     await cartService.AddToOrder(cartItem, userName);
                 }
-                return Ok(); 
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -62,6 +64,16 @@ namespace RestaurauntApp.Controllers
             return View();
         }
 
+        public async Task<IActionResult> ApplyDiscount(string discountCode)
+        {
+            try{
+                var result = await cartRepository.ApplyDiscount(discountCode,this.User.Identity.Name);
+            }
+            catch (Exception ex){
+                System.Console.WriteLine(ex);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutDTO cart)
         {
@@ -72,7 +84,7 @@ namespace RestaurauntApp.Controllers
             }
 
             try
-            {
+            {    
                 // Передача данных о корзине и текущем пользователе в метод Checkout репозитория
                 var result = await cartService.CreateCheckout(cart, userName: User.Identity.Name);
                 Console.WriteLine(result);
