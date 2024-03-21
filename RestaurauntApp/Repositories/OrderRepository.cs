@@ -46,53 +46,77 @@ namespace RestaurauntApp.Repositories
                 .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
             return order;
         }
-        public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
+    public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
+{
+    try
+    {
+        var order = await context.Orders
+            .Include(o => o.OrderItems)
+            .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+
+        if (order == null)
+        {
+            order = new Order { UserName = userName };
+            context.Orders.Add(order);
+        }
+
+        var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
+
+        if (existingOrderItem != null)
+        {
+            if(existingOrderItem.Quantity <= 0){
+                order.OrderItems.Remove(existingOrderItem);
+            }
+            else
+            {
+                existingOrderItem.Quantity = orderItemDTO.Quantity;
+            }
+        }
+        else
+        {
+            var orderItem = new OrderItem
+            {
+                MenuItemId = orderItemDTO.MenuItemId,
+                Quantity = orderItemDTO.Quantity,
+                Name = orderItemDTO.Name,
+                Price = orderItemDTO.Price,
+                UserName = userName
+            };
+            order.OrderItems.Add(orderItem);
+        }
+        order.TotalPrice = order.OrderItems.Sum(oi => oi.Quantity * oi.Price);
+
+        await context.SaveChangesAsync();
+
+        return true;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error adding item to order: {ex.Message}");
+        return false;
+    }
+}
+
+        public async Task<decimal> GetTotalPrice(string userName)
         {
             try
             {
-                // Проверка существует ли уже заказ у пользователя
-                // Проверка существует ли уже заказ у пользователя
                 var order = await context.Orders
-                   .Include(o => o.OrderItems)
-                   .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+                           .Include(o => o.OrderItems)
+                           .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
 
-
-                if (order == null)
+                if (order != null)
                 {
-                    // Если заказа нет, создаем новый
-                    order = new Order { UserName = userName };
-                    context.Orders.Add(order);
-                }
-
-                var orderItem = new OrderItem
-                {
-                    MenuItemId = orderItemDTO.MenuItemId,
-                    Quantity = orderItemDTO.Quantity,
-                    Name = orderItemDTO.Name,
-                    Price = orderItemDTO.Price,
-                    UserName = userName
-                };
-                System.Console.WriteLine(orderItem.Name);
-                var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
-
-                if (existingOrderItem != null)
-                {
-                    existingOrderItem.Quantity += orderItemDTO.Quantity;
+                    return order.TotalPrice;
                 }
                 else
                 {
-                    order.OrderItems.Add(orderItem);
+                    throw new Exception("Order not found");
                 }
-
-                order.TotalPrice += (orderItemDTO.Price * orderItemDTO.Quantity);
-                await context.SaveChangesAsync();
-
-                return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error adding item to order: {ex.Message}");
-                return false;
+                throw;
             }
         }
 
@@ -273,38 +297,59 @@ namespace RestaurauntApp.Repositories
             try
             {
                 var order = await context.Orders
-                .Include(o => o.OrderItems)
-                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+
                 if (order == null)
                 {
-                    return false;
+                    return false; // No order found for the user
                 }
+
                 Dictionary<string, decimal> discountCodes = new Dictionary<string, decimal>
         {
             { "OFF10", 0.1m }, // 10% discount
             { "SALE20", 0.2m } // 20% discount
         };
-                if (discountCodes.ContainsKey(discountCode))
+
+                if (discountCodes.TryGetValue(discountCode, out decimal discountPercentage))
                 {
-                    decimal discountPercentage = discountCodes[discountCode];
                     decimal discountAmount = order.TotalPrice * discountPercentage;
                     order.TotalPrice -= discountAmount;
 
                     await context.SaveChangesAsync();
-                    return true; 
+                    return true; // Discount applied successfully
                 }
                 else
                 {
-                    return false;
+                    return false; // Invalid discount code
                 }
             }
-
             catch (Exception ex)
             {
                 Console.WriteLine($"Error applying discount: {ex.Message}");
                 return false;
             }
         }
+public async Task<OrderItem> RemoveFromOrder(int itemId, string userName)
+{
+    var order = await context.Orders
+        .Include(o => o.OrderItems)
+        .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+
+    if (order != null)
+    {
+        var orderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == itemId);
+        if (orderItem != null)
+        {
+            order.TotalPrice -= (orderItem.Quantity * orderItem.Price);
+            context.OrderItems.Remove(orderItem);
+            await context.SaveChangesAsync();
+        }
+        return orderItem;
+    }
+    return null;
+}
+
 
     }
 }

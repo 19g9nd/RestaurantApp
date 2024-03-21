@@ -1,4 +1,4 @@
-@model RestaurauntApp.Models.Other.Checkout
+@model RestaurauntApp.DTOS.CheckoutDTO
 @{
     ViewData["Title"] = "Checkout";
 }
@@ -62,10 +62,8 @@
         await submitFormAndCreateOrder();
     });
 
-    // Функция для отправки формы после создания заказа из корзины
     async function submitFormAndCreateOrder() {
-        // Создаем заказ из корзины 
-        await createOrderFromCart();
+         clearCart();
         // Отправляем форму
         document.getElementById('checkoutForm').submit();
     }
@@ -89,35 +87,5 @@
             expiryInput.value = formattedInput;
         }
     });
-
-    async function createOrderFromCart() {
-        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        let orderItems = [];
-
-        // Convert cart items to order items
-        cartItems.forEach(cartItem => {
-            let orderItemDTO = {
-                MenuItemId: cartItem.id,
-                Quantity: cartItem.quantity,
-                Name: cartItem.name,
-                Price: cartItem.price
-            };
-            orderItems.push(orderItemDTO);
-        });
-
-        try {
-            await fetch('/Cart/AddToOrder', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderItems)
-            });
-            clearCart();
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
 
 </script>

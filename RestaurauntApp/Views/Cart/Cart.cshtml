@@ -30,7 +30,7 @@
         <button onclick="applyDiscount()">Apply</button>
     </div>
 
-    <p id="totalPrice" class="total-price">Total Price:</p>
+    <p id="totalPrice" class="total-price">Total Price: <span id="totalPriceValue"></span></p>
 
 
     <div style="display: flex; justify-content: center;">
@@ -43,9 +43,10 @@
 
 
 <script type="text/javascript">
-    function displayCartItems() {
+    async function displayCartItems() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
         let totalPrice = 0;
+        await createOrderFromCart();
 
         let tableBody = document.getElementById("cartItemsTableBody");
         tableBody.innerHTML = "";
@@ -72,23 +73,23 @@
             row.classList.add("cart-item-row");
 
             row.innerHTML = `
-        <td>${item.name}</td>
-        <td>${item.quantity}</td>
-        <td>${item.price}</td>
-<td>
-    <div class="button-wrapper">
-        <span class="plusBtn" onclick="plusItem('${item.id}')">+</span>
-        <span class="minusBtn" onclick="minusItem('${item.id}')">-</span>
-        <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
-    </div>
-</td>
-    `;
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>${item.price}</td>
+            <td>
+                <div class="button-wrapper">
+                    <span class="plusBtn" onclick="plusItem('${item.id}')">+</span>
+                    <span class="minusBtn" onclick="minusItem('${item.id}')">-</span>
+                    <span class="remove_cmpl_btn" onclick="removeItem('${item.id}')"></span>
+                </div>
+            </td>
+        `;
             tableBody.appendChild(row);
-            totalPrice += item.price * item.quantity;
         });
 
-        totalPriceElement.innerText = "Total Price: " + totalPrice;
+        displayTotalPrice();
     }
+
 
     // Вызываем функцию отображения корзины при загрузке страницы
     displayCartItems();
@@ -102,8 +103,25 @@
             if (index !== -1) {
                 cartItems.splice(index, 1);
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+                // Remove item from the order
+                removeFromOrder(itemId);
+
                 window.location.reload();
             }
+        }
+    }
+
+    async function removeFromOrder(itemId) {
+        try {
+            await fetch('/Cart/RemoveFromOrder?itemId=' + itemId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        } catch (error) {
+            console.error('Error removing item from order:', error);
         }
     }
 
@@ -123,64 +141,118 @@
             console.log("Item not found in cartItems");
         }
     }
-    function minusItem(itemId) {
-        console.log("Item ID to minus:", itemId);
-        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
-        if (index !== -1) {
-            // Найден элемент в корзине
-            if (cartItems[index].quantity > 1) {
-                cartItems[index].quantity -= 1;
-            }
-            else {
-
-                removeItem(itemId);
-            }
-            localStorage.setItem('cartItems', JSON.stringify(cartItems));
-            window.location.reload();
+   function minusItem(itemId) {
+    console.log("Item ID to minus:", itemId);
+    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+    if (index !== -1) {
+        // Найден элемент в корзине
+        if (cartItems[index].quantity > 1) {
+            cartItems[index].quantity -= 1;
         } else {
-            // Элемент не найден в корзине
-            console.log("Item not found in cartItems");
+            // Если количество меньше или равно 1, удаляем элемент из корзины
+            removeItem(itemId);
+            return;
         }
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        window.location.reload();
+    } else {
+        // Элемент не найден в корзине
+        console.log("Item not found in cartItems");
     }
+}
 
-    function createOrderFromCart() {
+
+    async function createOrderFromCart() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let orderItems = [];
+
+        // Convert cart items to order items
         cartItems.forEach(cartItem => {
-            console.log(cartItem);
-            // Создание объекта orderItemDTO на основе данных из localStorage
             let orderItemDTO = {
                 MenuItemId: cartItem.id,
                 Quantity: cartItem.quantity,
                 Name: cartItem.name,
                 Price: cartItem.price
             };
-            console.log(orderItemDTO);
-            console.log(JSON.stringify({ orderItemDTO: orderItemDTO }));
-            fetch('/Cart/AddToOrder', {
+            orderItems.push(orderItemDTO);
+        });
+
+        try {
+            await fetch('/Cart/AddToOrder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(orderItemDTO)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Fail adding item to order');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
+                body: JSON.stringify(orderItems)
+            });
+            updateTotalPrice();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 
-        // Очистка корзины после успешного добавления всех элементов в заказ
-        clearCart();
+    function displayTotalPrice() {
+        fetch('/Cart/GetTotalPrice', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to fetch total price');
+                }
+            })
+            .then(data => {
+                document.getElementById("totalPriceValue").innerText = data.totalPrice;
+            })
+            .catch(error => {
+                console.error('Error fetching total price:', error);
+            });
+    }
+    async function updateTotalPrice() {
+        try {
+            const response = await fetch('/Cart/GetTotalPrice', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("totalPriceValue").innerText = data.totalPrice;
+            } else {
+                throw new Error('Failed to fetch total price');
+            }
+        } catch (error) {
+            console.error('Error fetching total price:', error);
+        }
     }
 
     function applyDiscount() {
         let discountCode = document.getElementById("discountCode").value;
-        confirm("Discount code entered: " + discountCode);
+
+        fetch('/Cart/ApplyDiscount', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ discountCode: discountCode })
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    console.error('Failed to apply discount');
+                }
+            })
+            .catch(error => {
+                console.error('Error applying discount:', error);
+            });
     }
+    updateTotalPrice();
 
 </script>
