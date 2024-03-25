@@ -10,8 +10,10 @@ using RestaurauntApp.Services.Base;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MenuDb");
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
-builder.Services.AddScoped<IMenuService,MenuService>();
-builder.Services.AddScoped<IOrderService,OrderService>();
+builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddScoped<IMenuService, MenuService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
     options.UseSqlServer(connectionString)
 );

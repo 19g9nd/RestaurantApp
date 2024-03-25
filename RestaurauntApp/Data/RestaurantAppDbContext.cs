@@ -15,5 +15,6 @@ namespace RestaurauntApp.Data
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<LogEntry> logEntries { get; set; }
         public DbSet<Checkout> Checkouts { get; set; }
+        public DbSet<DiscountCode> DiscountCodes { get; set; }
     }
 }

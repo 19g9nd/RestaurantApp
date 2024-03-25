@@ -37,26 +37,26 @@ namespace RestaurauntApp.Controllers
             }
         }
         [HttpDelete]
-public async Task<IActionResult> RemoveFromOrder(int itemId)
-{
-    try
-    {
-        var orderItem = await cartRepository.RemoveFromOrder(itemId, User.Identity.Name);
-        if (orderItem != null)
+        public async Task<IActionResult> RemoveFromOrder(int itemId)
         {
-            return Ok(); // Item successfully removed from the order
+            try
+            {
+                var orderItem = await cartRepository.RemoveFromOrder(itemId, User.Identity.Name);
+                if (orderItem != null)
+                {
+                    return Ok(); // Item successfully removed from the order
+                }
+                else
+                {
+                    return NotFound(); // Item not found in the order
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error removing item from order: {ex.Message}");
+                return StatusCode(500); // Internal server error
+            }
         }
-        else
-        {
-            return NotFound(); // Item not found in the order
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error removing item from order: {ex.Message}");
-        return StatusCode(500); // Internal server error
-    }
-}
 
 
         [HttpPost]
@@ -91,28 +91,38 @@ public async Task<IActionResult> RemoveFromOrder(int itemId)
             try
             {
                 var result = await cartRepository.ApplyDiscount(discountCode, this.User.Identity.Name);
+                if (result)
+                {
+                    return base.Ok();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Failed to apply the discount.");
+                    return BadRequest("Invalid discount code");
+                }
             }
             catch (Exception ex)
             {
                 System.Console.WriteLine(ex);
+                return StatusCode(500, "An error occurred while processing the request.");
             }
-            return View("Cart");
         }
-          [HttpGet]
-    public async Task<IActionResult> GetTotalPrice()
-    {
-        try
+
+        [HttpGet]
+        public async Task<IActionResult> GetTotalPrice()
         {
-            var totalPrice = await cartRepository.GetTotalPrice(User.Identity.Name);
-            return Json(new { totalPrice });
+            try
+            {
+                var totalPrice = await cartRepository.GetTotalPrice(User.Identity.Name);
+                return Json(new { totalPrice });
+            }
+            catch (Exception ex)
+            {
+                System.Console.WriteLine(ex);
+                // Handle exception
+                return StatusCode(500, "Error fetching total price");
+            }
         }
-        catch (Exception ex)
-        {
-            System.Console.WriteLine(ex);
-            // Handle exception
-            return StatusCode(500, "Error fetching total price");
-        }
-    }
 
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutDTO cart)

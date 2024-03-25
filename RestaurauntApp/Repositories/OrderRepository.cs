@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RestaurauntApp.Data;
 using RestaurauntApp.DTOS;
@@ -46,56 +47,57 @@ namespace RestaurauntApp.Repositories
                 .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
             return order;
         }
-    public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
-{
-    try
-    {
-        var order = await context.Orders
-            .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
-
-        if (order == null)
+        public async Task<bool> AddToOrder(OrderItemDTO orderItemDTO, string userName)
         {
-            order = new Order { UserName = userName };
-            context.Orders.Add(order);
-        }
-
-        var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
-
-        if (existingOrderItem != null)
-        {
-            if(existingOrderItem.Quantity <= 0){
-                order.OrderItems.Remove(existingOrderItem);
-            }
-            else
+            try
             {
-                existingOrderItem.Quantity = orderItemDTO.Quantity;
+                var order = await context.Orders
+                    .Include(o => o.OrderItems)
+                    .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+
+                if (order == null)
+                {
+                    order = new Order { UserName = userName };
+                    context.Orders.Add(order);
+                }
+
+                var existingOrderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == orderItemDTO.MenuItemId);
+
+                if (existingOrderItem != null)
+                {
+                    if (existingOrderItem.Quantity <= 0)
+                    {
+                        order.OrderItems.Remove(existingOrderItem);
+                    }
+                    else
+                    {
+                        existingOrderItem.Quantity = orderItemDTO.Quantity;
+                    }
+                }
+                else
+                {
+                    var orderItem = new OrderItem
+                    {
+                        MenuItemId = orderItemDTO.MenuItemId,
+                        Quantity = orderItemDTO.Quantity,
+                        Name = orderItemDTO.Name,
+                        Price = orderItemDTO.Price,
+                        UserName = userName
+                    };
+                    order.OrderItems.Add(orderItem);
+                }
+                order.TotalPrice = order.OrderItems.Sum(oi => oi.Quantity * oi.Price);
+
+                await context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding item to order: {ex.Message}");
+                return false;
             }
         }
-        else
-        {
-            var orderItem = new OrderItem
-            {
-                MenuItemId = orderItemDTO.MenuItemId,
-                Quantity = orderItemDTO.Quantity,
-                Name = orderItemDTO.Name,
-                Price = orderItemDTO.Price,
-                UserName = userName
-            };
-            order.OrderItems.Add(orderItem);
-        }
-        order.TotalPrice = order.OrderItems.Sum(oi => oi.Quantity * oi.Price);
-
-        await context.SaveChangesAsync();
-
-        return true;
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error adding item to order: {ex.Message}");
-        return false;
-    }
-}
 
         public async Task<decimal> GetTotalPrice(string userName)
         {
@@ -116,6 +118,7 @@ namespace RestaurauntApp.Repositories
             }
             catch (Exception ex)
             {
+                System.Console.WriteLine(ex);
                 throw;
             }
         }
@@ -291,7 +294,6 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
-
         public async Task<bool> ApplyDiscount(string discountCode, string userName)
         {
             try
@@ -302,26 +304,31 @@ namespace RestaurauntApp.Repositories
 
                 if (order == null)
                 {
-                    return false; // No order found for the user
+                    return false;
                 }
 
-                Dictionary<string, decimal> discountCodes = new Dictionary<string, decimal>
-        {
-            { "OFF10", 0.1m }, // 10% discount
-            { "SALE20", 0.2m } // 20% discount
-        };
+                // Проверяем, использовал ли текущий пользователь код скидки ранее
+                var discount = await context.DiscountCodes
+                    .Include(dc => dc.Usages)
+                    .FirstOrDefaultAsync(d => d.Code == discountCode &&
+                                              d.ValidFrom <= DateTime.Now &&
+                                              d.ValidTo >= DateTime.Now &&
+                                              !d.Usages.Any(u => u.UserName == userName));
 
-                if (discountCodes.TryGetValue(discountCode, out decimal discountPercentage))
+                if (discount != null)
                 {
-                    decimal discountAmount = order.TotalPrice * discountPercentage;
+                    decimal discountAmount = order.TotalPrice * (discount.Value / 100);
                     order.TotalPrice -= discountAmount;
 
+                    // Записываем использование кода скидки
+                    discount.Usages.Add(new DiscountUsage { UserName = userName, UsageDate = DateTime.Now });
+
                     await context.SaveChangesAsync();
-                    return true; // Discount applied successfully
+                    return true; 
                 }
                 else
                 {
-                    return false; // Invalid discount code
+                    return false; 
                 }
             }
             catch (Exception ex)
@@ -330,25 +337,27 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
-public async Task<OrderItem> RemoveFromOrder(int itemId, string userName)
-{
-    var order = await context.Orders
-        .Include(o => o.OrderItems)
-        .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
 
-    if (order != null)
-    {
-        var orderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == itemId);
-        if (orderItem != null)
+
+        public async Task<OrderItem> RemoveFromOrder(int itemId, string userName)
         {
-            order.TotalPrice -= (orderItem.Quantity * orderItem.Price);
-            context.OrderItems.Remove(orderItem);
-            await context.SaveChangesAsync();
+            var order = await context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.UserName == userName && o.OrderState == EnumOrderState.waiting);
+
+            if (order != null)
+            {
+                var orderItem = order.OrderItems.FirstOrDefault(oi => oi.MenuItemId == itemId);
+                if (orderItem != null)
+                {
+                    order.TotalPrice -= (orderItem.Quantity * orderItem.Price);
+                    context.OrderItems.Remove(orderItem);
+                    await context.SaveChangesAsync();
+                }
+                return orderItem;
+            }
+            return null;
         }
-        return orderItem;
-    }
-    return null;
-}
 
 
     }

@@ -5,6 +5,7 @@
 }
 
 <link href="@Url.Content("~/css/Cart/Cart/light.css")" rel="stylesheet" type="text/css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body class="main-container">
     <h2>Cart</h2>
@@ -23,16 +24,17 @@
             <!-- Элементы корзины будут добавлены сюда динамически -->
         </tbody>
     </table>
-    <!-- Discount code input field -->
+
+    @if(Model.OrderItems.Count > 0){
     <div>
         <label for="discountCode">Enter Discount Code:</label>
         <input type="text" id="discountCode" name="discountCode">
         <button onclick="applyDiscount()">Apply</button>
     </div>
 
+    }
+
     <p id="totalPrice" class="total-price">Total Price: <span id="totalPriceValue"></span></p>
-
-
     <div style="display: flex; justify-content: center;">
         <form asp-action="Checkout" method="Get">
             <button type="submit" class="btn_checkout">Checkout</button>
@@ -41,7 +43,7 @@
     </div>
 </body>
 
-
+<script src="sweetalert2.all.min.js"></script>
 <script type="text/javascript">
     async function displayCartItems() {
         let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -104,9 +106,7 @@
                 cartItems.splice(index, 1);
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
-                // Remove item from the order
                 removeFromOrder(itemId);
-
                 window.location.reload();
             }
         }
@@ -141,26 +141,26 @@
             console.log("Item not found in cartItems");
         }
     }
-   function minusItem(itemId) {
-    console.log("Item ID to minus:", itemId);
-    let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    let index = cartItems.findIndex(item => item.id === parseInt(itemId));
-    if (index !== -1) {
-        // Найден элемент в корзине
-        if (cartItems[index].quantity > 1) {
-            cartItems[index].quantity -= 1;
+    function minusItem(itemId) {
+        console.log("Item ID to minus:", itemId);
+        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        let index = cartItems.findIndex(item => item.id === parseInt(itemId));
+        if (index !== -1) {
+            // Найден элемент в корзине
+            if (cartItems[index].quantity > 1) {
+                cartItems[index].quantity -= 1;
+            } else {
+                // Если количество меньше или равно 1, удаляем элемент из корзины
+                removeItem(itemId);
+                return;
+            }
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            window.location.reload();
         } else {
-            // Если количество меньше или равно 1, удаляем элемент из корзины
-            removeItem(itemId);
-            return;
+            // Элемент не найден в корзине
+            console.log("Item not found in cartItems");
         }
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        window.location.reload();
-    } else {
-        // Элемент не найден в корзине
-        console.log("Item not found in cartItems");
     }
-}
 
 
     async function createOrderFromCart() {
@@ -213,6 +213,7 @@
                 console.error('Error fetching total price:', error);
             });
     }
+
     async function updateTotalPrice() {
         try {
             const response = await fetch('/Cart/GetTotalPrice', {
@@ -232,27 +233,41 @@
         }
     }
 
-    function applyDiscount() {
+    async function applyDiscount() {
         let discountCode = document.getElementById("discountCode").value;
+        console.log(discountCode);
 
-        fetch('/Cart/ApplyDiscount', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ discountCode: discountCode })
-        })
-            .then(response => {
-                if (response.ok) {
-                    window.location.reload();
-                } else {
-                    console.error('Failed to apply discount');
-                }
-            })
-            .catch(error => {
-                console.error('Error applying discount:', error);
+        var formData = new FormData();
+        formData.append('discountCode', discountCode);
+        const Swal = window.Sweetalert2;
+
+        try {
+            const response = await fetch('/Cart/ApplyDiscount', {
+                method: 'POST',
+                body: formData
             });
+
+            if (response.ok) {
+                await updateTotalPrice();
+                Swal.fire({
+                    title: "Success!",
+                    text: "Discount applied successfully!",
+                    icon: "success"
+                });
+            } else if (response.status === 400) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Something went wrong!",
+                    footer: '<a href="#">Discount code is invalid or already used.</a>'
+                });
+            } else {
+                alert('Failed to apply.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
-    updateTotalPrice();
+
 
 </script>

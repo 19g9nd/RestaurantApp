@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "material-components-web": "^14.0.0"
+    "material-components-web": "^14.0.0",
+    "sweetalert2": "^11.10.6"
   }
 }

@@ -17,7 +17,7 @@
 .labelCheckout {
   color: #111;
 }
-label {
+.labelCheckout{
   display: block;
   margin-bottom: 5px;
   color: #333;

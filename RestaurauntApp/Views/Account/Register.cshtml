@@ -113,6 +113,9 @@
         color: red;
         font-weight: bold;
     }
+    .registration_label{
+        color: white !important;
+    }
 </style>
 
 <div class="registration-form">
@@ -120,12 +123,12 @@
     <form method="post" asp-action="Register" asp-controller="Account">
         <div asp-validation-summary="All" class="validator"></div>
         <div class="form-group">
-            <label asp-for="Name">Name:</label>
+            <label class="registration_label" asp-for="Name">Name:</label>
             <input type="text" asp-for="Name" required />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Password">Password:</label>
+            <label class="registration_label" asp-for="Password">Password:</label>
             <input type="password" asp-for="Password" required />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>

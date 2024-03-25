@@ -24,7 +24,6 @@ body {
     cursor: pointer;
     border: 2px solid black; 
   }
- /* Добавляем обводку к элементам списка выбора */
 .form-control option {
   border: 1px solid #a69cec; /* Цвет и толщина обводки */
   border-radius: 4px; /* Закругление углов */
@@ -116,7 +115,6 @@ body {
 
   .file-input {
     display: none;
-    /* Скрыть поле выбора файла */
   }
 
   .file-label {

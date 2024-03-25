@@ -5,13 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>@ViewData["Title"] - RestaurantApp</title>
 
-<!-- Layout.cshtml -->
 <link href="~/css/Menu/GetAll/light.css" rel="stylesheet" type="text/css" data-page="Menu/GetAll" />
 <link href="~/css/Menu/Create/light.css" rel="stylesheet" type="text/css" data-page="Menu/Create" />
 <link href="~/css/Cart/Checkout/light.css" rel="stylesheet" type="text/css" data-page="Cart/Checkout" />
 <link href="~/css/Home/Contacts/light.css" rel="stylesheet" type="text/css" data-page="Home/Contacts/" />
 <!-- Stylesheets -->
-<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link href="https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide"
     rel="stylesheet">
 @RenderSection("Styles", required: false)
@@ -126,6 +124,11 @@
         line-height: 14px;
         background-color: #f2f2f2;
         color: #333;
+        min-height: 100vh;
+        margin: 0;
+
+        display: grid;
+        grid-template-rows: auto 1fr auto;
     }
 
     header {
@@ -133,6 +136,7 @@
         color: white;
         text-align: center;
         padding: 1em;
+        min-height: 50px;
     }
 
     .sticky-header {
@@ -144,12 +148,14 @@
         padding: 1em;
         z-index: 100;
         box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        min-height: 50px;
     }
 
     nav {
         background-color: #080708;
         padding: 0.5em;
         text-align: center;
+        min-height: 50px;
     }
 
     nav a {
@@ -191,12 +197,13 @@
         color: white;
         text-align: center;
         padding: 1em;
+        margin-top: auto;
     }
 
     .page-container {
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        min-height: 90vh;
     }
 
     main {
@@ -256,6 +263,7 @@
                     @if (this.User.IsInRole("Admin"))
                     {
                         <a asp-area="" asp-controller="Menu" asp-action="Create">Create menu item</a>
+                        <a asp-area="" asp-controller="Discount" asp-action="Add">Add discount code</a>
                     }
                     @if (this.User?.Identity?.IsAuthenticated == false)
                     {

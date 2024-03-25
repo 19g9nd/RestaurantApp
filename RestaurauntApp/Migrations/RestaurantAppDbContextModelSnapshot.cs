@@ -255,6 +255,32 @@ namespace RestaurauntApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("RestaurauntApp.Models.DiscountCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiscountCodes");
+                });
+
             modelBuilder.Entity("RestaurauntApp.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -370,6 +396,31 @@ namespace RestaurauntApp.Migrations
                     b.ToTable("Checkouts");
                 });
 
+            modelBuilder.Entity("RestaurauntApp.Models.Other.DiscountUsage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DiscountCodeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UsageDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountCodeId");
+
+                    b.ToTable("DiscountUsage");
+                });
+
             modelBuilder.Entity("RestaurauntApp.Services.Classes.LogEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -460,6 +511,22 @@ namespace RestaurauntApp.Migrations
                     b.HasOne("RestaurauntApp.Models.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId");
+                });
+
+            modelBuilder.Entity("RestaurauntApp.Models.Other.DiscountUsage", b =>
+                {
+                    b.HasOne("RestaurauntApp.Models.DiscountCode", "DiscountCode")
+                        .WithMany("Usages")
+                        .HasForeignKey("DiscountCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DiscountCode");
+                });
+
+            modelBuilder.Entity("RestaurauntApp.Models.DiscountCode", b =>
+                {
+                    b.Navigation("Usages");
                 });
 
             modelBuilder.Entity("RestaurauntApp.Models.Order", b =>
