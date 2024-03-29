@@ -6,7 +6,6 @@
 
 <title>@ViewData["Title"]</title>
 <link href="@Url.Content("~/css/Menu/GetAll/light.css")" rel="stylesheet" type="text/css" />
-
 <body class="main-container">
     <h2 class="TitleMenu">Menu Items</h2>
     <div class="category-filter">
@@ -83,28 +82,32 @@
             });
     }
 
-    function openDetails(menuItemId) {
-        fetch('/menu/GetDetails?id=' + menuItemId, {
-            method: 'GET'
+  function openDetails(menuItemId) {
+    fetch('/menu/GetDetails?id=' + menuItemId, {
+        method: 'GET'
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Ошибка загрузки данных.');
+            }
         })
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error('Ошибка загрузки данных.');
-                }
-            })
-            .then(data => {
-                const modalContent = document.querySelector('#productDetailsModal .modal-content');
-                modalContent.innerHTML = data;
-                modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
-                const modal = document.getElementById('productDetailsModal');
-                modal.style.display = 'block';
-            })
-            .catch(error => {
-                console.error('Ошибка загрузки данных: ' + error);
-            });
-    }
+        .then(data => {
+            const modalContent = document.querySelector('#productDetailsModal .modal-content');
+            modalContent.innerHTML = data;
+            modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
+            const modal = document.getElementById('productDetailsModal');
+            modal.style.display = 'block';
+
+            // При открытии popup'а изменяем тему на "dark"
+            changeTheme('dark');
+        })
+        .catch(error => {
+            console.error('Ошибка загрузки данных: ' + error);
+        });
+}
+
 
     function closeModal() {
         const modal = document.getElementById('productDetailsModal');

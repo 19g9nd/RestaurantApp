@@ -182,7 +182,9 @@ namespace RestaurauntApp.Controllers
             return View();
         }
 
-       public async Task<IActionResult> Delete()
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> Delete()
         {
             var user = await userManager.GetUserAsync(User);
             if (user == null)
@@ -200,4 +202,3 @@ namespace RestaurauntApp.Controllers
         }
     }
 }
- 

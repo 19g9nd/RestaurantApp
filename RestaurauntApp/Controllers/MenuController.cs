@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using RestaurauntApp.DTOS;
 using RestaurauntApp.Services.Base;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RestaurantApp.Controllers
 {
@@ -22,12 +23,15 @@ namespace RestaurantApp.Controllers
 
         [HttpGet]
         [Route("[action]")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Create([FromForm][Bind("Id,Name,Description,Category,IsVegetarian,Calories,Price")] MenuItemDTO newMenuItem, IFormFile Image)
         {
             try
@@ -49,8 +53,8 @@ namespace RestaurantApp.Controllers
             }
         }
 
-
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var rowsDeleted = await menuService.DeleteMenuItem(id);
@@ -61,14 +65,17 @@ namespace RestaurantApp.Controllers
             return RedirectToAction("GetAll");
 
         }
+
         [HttpGet]
         [Route("GetDetails")]
+        [Authorize]
         public async Task<IActionResult> GetDetails(int id)
         {
             var menuItem = await menuService.GetMenuItem(id);
             return View(menuItem);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateMenuItemAsync(int id, [FromBody] MenuItemDTO menuItemToUpdate)
         {
@@ -79,7 +86,9 @@ namespace RestaurantApp.Controllers
             }
             return Ok();
         }
+
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [Route("edit/{id}")]
         public async Task<IActionResult> Edit(int id)
         {
@@ -93,7 +102,8 @@ namespace RestaurantApp.Controllers
 
         [HttpPost]
         [Route("update")]
-        public async Task<IActionResult> Update(int id,MenuItemDTO menuItem)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, MenuItemDTO menuItem)
         {
             if (!ModelState.IsValid)
             {

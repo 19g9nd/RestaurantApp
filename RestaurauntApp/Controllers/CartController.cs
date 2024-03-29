@@ -36,6 +36,7 @@ namespace RestaurauntApp.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing your request." });
             }
         }
+        
         [HttpDelete]
         public async Task<IActionResult> RemoveFromOrder(int itemId)
         {
@@ -44,17 +45,17 @@ namespace RestaurauntApp.Controllers
                 var orderItem = await cartRepository.RemoveFromOrder(itemId, User.Identity.Name);
                 if (orderItem != null)
                 {
-                    return Ok(); // Item successfully removed from the order
+                    return Ok();
                 }
                 else
                 {
-                    return NotFound(); // Item not found in the order
+                    return NotFound();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error removing item from order: {ex.Message}");
-                return StatusCode(500); // Internal server error
+                return StatusCode(500);
             }
         }
 
@@ -119,7 +120,6 @@ namespace RestaurauntApp.Controllers
             catch (Exception ex)
             {
                 System.Console.WriteLine(ex);
-                // Handle exception
                 return StatusCode(500, "Error fetching total price");
             }
         }
@@ -129,23 +129,19 @@ namespace RestaurauntApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                // Если модель не проходит валидацию, вернуть текущее представление с ошибками валидации
                 return View(cart);
             }
 
             try
             {
-                // Передача данных о корзине и текущем пользователе в метод Checkout репозитория
                 var result = await cartService.CreateCheckout(cart, userName: User.Identity.Name);
                 Console.WriteLine(result);
                 if (result)
                 {
-                    // Если заказ успешно оформлен, перенаправляем пользователя на страницу со всем меню
                     return RedirectToAction("Success", "Cart");
                 }
                 else
                 {
-                    // view с ошибкой
                     return View("Checkout");
                 }
             }

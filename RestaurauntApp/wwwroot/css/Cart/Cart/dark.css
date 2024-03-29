@@ -14,7 +14,24 @@ h2 {
     color: #ffffff;
     font-size: 28px;
 }
-
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="datetime-local"] {
+  width: auto !important;
+  padding: 10px;
+  margin-top: 5px;
+  border: 0px !important;
+  border-radius: 0px !important;
+  font-size: 16px;
+  background-color:#514347;
+  color: white;
+}
+  .input:focus {
+    outline-offset: 5px;
+    background-color: #4a3c40;
+    color: white;
+  }
 /* Стили для сообщения о пустой корзине */
 .empty-cart-message {
     font-style: italic;

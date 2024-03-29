@@ -25,10 +25,10 @@
         </tbody>
     </table>
 
-    @if(Model.OrderItems.Count > 0){
+   @if(Model != null && Model.OrderItems != null && Model.OrderItems.Count > 0){
     <div>
         <label for="discountCode">Enter Discount Code:</label>
-        <input type="text" id="discountCode" name="discountCode">
+        <input type="text" id="discountCode" name="discountCode" class="input">
         <button onclick="applyDiscount()">Apply</button>
     </div>
 
@@ -268,6 +268,5 @@
             console.error('Error:', error);
         }
     }
-
 
 </script>
