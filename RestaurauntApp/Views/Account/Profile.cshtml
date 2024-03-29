@@ -4,237 +4,13 @@
 
 
 <title>@ViewData["Title"]</title>
-<style>
-    .button-82-pushable {
-        position: relative;
-        border: none;
-        background: transparent;
-        padding: 0;
-        cursor: pointer;
-        outline-offset: 4px;
-        transition: filter 250ms;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-    }
-
-    .button-82-shadow {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 12px;
-        background: hsl(0deg 0% 0% / 0.25);
-        will-change: transform;
-        transform: translateY(2px);
-        transition:
-            transform 600ms cubic-bezier(.3, .7, .4, 1);
-    }
-
-    .button-82-edge {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 12px;
-        background: linear-gradient(to left,
-                hsl(340deg 100% 16%) 0%,
-                hsl(340deg 100% 32%) 8%,
-                hsl(340deg 100% 32%) 92%,
-                hsl(340deg 100% 16%) 100%);
-    }
-
-    .button-82-front {
-        display: block;
-        position: relative;
-        padding: 12px 27px;
-        border-radius: 12px;
-        font-size: 1.1rem;
-        color: white;
-        background: hsl(345deg 100% 47%);
-        will-change: transform;
-        transform: translateY(-4px);
-        transition:
-            transform 600ms cubic-bezier(.3, .7, .4, 1);
-    }
-
-    @@media (min-width: 768px) {
-        .button-82-front {
-            font-size: 1.25rem;
-            padding: 12px 42px;
-        }
-    }
-
-    .button-82-pushable:hover {
-        filter: brightness(110%);
-        -webkit-filter: brightness(110%);
-    }
-
-    .button-82-pushable:hover .button-82-front {
-        transform: translateY(-6px);
-        transition:
-            transform 250ms cubic-bezier(.3, .7, .4, 1.5);
-    }
-
-    .button-82-pushable:active .button-82-front {
-        transform: translateY(-2px);
-        transition: transform 34ms;
-    }
-
-    .profile-container {
-        max-width: 600px;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Change Password Popup Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        border-radius: 8px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .button-82-pushable:hover .button-82-shadow {
-        transform: translateY(4px);
-        transition:
-            transform 250ms cubic-bezier(.3, .7, .4, 1.5);
-    }
-
-    .button-82-pushable:active .button-82-shadow {
-        transform: translateY(1px);
-        transition: transform 34ms;
-    }
-
-    .button-82-pushable:focus:not(:focus-visible) {
-        outline: none;
-    }
-
-    .pushable {
-        position: relative;
-        border: none;
-        background: transparent;
-        padding: 0;
-        cursor: pointer;
-        outline-offset: 4px;
-        transition: filter 250ms;
-        margin-bottom: 10px;
-    }
-
-    .shadow {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 12px;
-        background: hsl(0deg 0% 0% / 0.25);
-        will-change: transform;
-        transform: translateY(2px);
-        transition:
-            transform 600ms cubic-bezier(.3, .7, .4, 1);
-    }
-
-    .edge {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: 12px;
-        background: linear-gradient(to left,
-                hsl(340deg 100% 16%) 0%,
-                hsl(340deg 100% 32%) 8%,
-                hsl(340deg 100% 32%) 92%,
-                hsl(340deg 100% 16%) 100%);
-    }
-
-    .front {
-        display: block;
-        position: relative;
-        padding: 12px 42px;
-        border-radius: 12px;
-        font-size: 1.25rem;
-        color: hsl(0, 0%, 100%);
-        background: hsl(200, 100%, 50%);
-        /* Голубой цвет фона */
-        will-change: transform;
-        transform: translateY(-4px);
-        transition:
-            transform 600ms cubic-bezier(.3, .7, .4, 1);
-    }
-
-    .pushable:hover {
-        filter: brightness(110%);
-    }
-
-    .pushable:hover .front {
-        transform: translateY(-6px);
-        transition:
-            transform 250ms cubic-bezier(.3, .7, .4, 1.5);
-    }
-
-    .pushable:active .front {
-        transform: translateY(-2px);
-        transition: transform 34ms;
-    }
-
-    .pushable:hover .shadow {
-        transform: translateY(4px);
-        transition:
-            transform 250ms cubic-bezier(.3, .7, .4, 1.5);
-    }
-
-    .pushable:active .shadow {
-        transform: translateY(1px);
-        transition: transform 34ms;
-    }
-
-    .pushable:focus:not(:focus-visible) {
-        outline: none;
-    }
-</style>
+<link href="@Url.Content("~/css/Account/Profile/light.css")" rel="stylesheet" type="text/css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body>
     <div style="margin-top:50px;" class="profile-container">
-        <div style="background-color: #f0f0f0; padding: 20px; border-radius: 8px; margin-bottom: 20px;margin-top:20px;">
-            <h2 style="margin: 0; color: #333;">Welcome to Your Profile, <span
-                    style="color: rgb(131, 0, 175);">@User.Identity.Name</span>!</h2>
+        <div class="profile-info">
+            <h2 class="meet-user">Welcome to Your Profile, <span class="meet-username">@User.Identity.Name !</span></h2>
             <p style="font-size: 1.1rem; margin-top: 10px;">We're glad to have you here. Explore your profile and feel
                 free to make any changes you need.</p>
         </div>
@@ -284,6 +60,10 @@
                 modalContent.innerHTML += '<button type="button" class="modal-close" onclick="closeModal()">&times;</button>';
                 const modal = document.getElementById('change-password-modal');
                 modal.style.display = 'block';
+                var savedTheme = getCookie("theme");
+                if (savedTheme) {
+                    changeTheme(savedTheme);
+                }
             })
             .catch(error => {
                 console.error('Ошибка загрузки данных: ' + error);
@@ -295,27 +75,43 @@
         modal.style.display = 'none';
     }
 
-    function submitDelete() {
-        if (confirm('Are you sure you want to delete profile? This action is permanent.')) {
+  function submitDelete() {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
             var form = document.getElementById('deleteForm');
             var formData = new FormData(form);
             fetch('/Account/Delete', {
                 method: 'DELETE',
                 body: formData
             })
-                .then(response => {
-                    if (response.ok) {
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your account has been deleted.",
+                        icon: "success"
+                    }).then(() => {
                         window.location.href = '/Account/LogOut';
-                    } else if (response.status === 404) {
-                        alert('Account not found.');
-                    } else {
-                        alert('Failed to delete account.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                    });
+                } else if (response.status === 404) {
+                    alert('Account not found.');
+                } else {
+                    alert('Failed to delete account.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
-    }
+    });
+}
 
 </script>

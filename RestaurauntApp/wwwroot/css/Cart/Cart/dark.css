@@ -1,18 +1,18 @@
- /* Стили для основного контейнера */
- .main-container {
-    background-color: #201a1b;
-    color: #ffffff;
-    margin: 0;
-    padding: 0;
-    max-height: fit-content;
+/* Стили для основного контейнера */
+.main-container {
+  background-color: #201a1b;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  max-height: fit-content;
 }
 
 /* Стили для заголовка страницы */
 h2 {
-    text-align: center;
-    padding: 20px;
-    color: #ffffff;
-    font-size: 28px;
+  text-align: center;
+  padding: 20px;
+  color: #ffffff;
+  font-size: 28px;
 }
 input[type="text"],
 input[type="email"],
@@ -24,138 +24,142 @@ input[type="datetime-local"] {
   border: 0px !important;
   border-radius: 0px !important;
   font-size: 16px;
-  background-color:#514347;
+  background-color: #514347;
   color: white;
 }
-  .input:focus {
-    outline-offset: 5px;
-    background-color: #4a3c40;
-    color: white;
-  }
+
+.discountLabel {
+  color: white;
+}
+
+.input:focus {
+  outline-offset: 5px;
+  background-color: #4a3c40;
+  color: white;
+}
 /* Стили для сообщения о пустой корзине */
 .empty-cart-message {
-    font-style: italic;
-    color: #777;
-    text-align: center;
+  font-style: italic;
+  color: #777;
+  text-align: center;
 }
 
 /* Стили для таблицы */
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #5a3f47;
-    margin-bottom: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #5a3f47;
+  margin-bottom: 20px;
 }
 
 .table th,
 .table td {
-    border: 1px solid #000000;
-    padding: 8px;
-    text-align: left;
+  border: 1px solid #000000;
+  padding: 8px;
+  text-align: left;
 }
 
 .table th {
-    background-color: #422931;
+  background-color: #422931;
 }
 
 /* Стили для строки с итемами корзины */
 .cart-item-row {
-    border-bottom: 1px solid #d5c2c6;
+  border-bottom: 1px solid #d5c2c6;
 }
 
 /* Стили для общей цены */
 .total-price {
-    text-align: right;
-    font-weight: bold;
-    margin-right: 20px;
-    color: #ffffff;
+  text-align: right;
+  font-weight: bold;
+  margin-right: 20px;
+  color: #ffffff;
 }
 
 .button-wrapper {
-    width: 70px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  width: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .remove_cmpl_btn {
-    width: 48px;
-    height: 30px;
-    background: url('/Assets/delete.ico') no-repeat;
-    background-size: 100%;
+  width: 48px;
+  height: 30px;
+  background: url("/Assets/delete.ico") no-repeat;
+  background-size: 100%;
 }
 
 .plusBtn {
-    font-size: 30px;
-    font-weight: bolder;
-    margin-right: 5px;
-    background-size: 60%;
-    color: #ff1493;
-
+  font-size: 30px;
+  font-weight: bolder;
+  margin-right: 5px;
+  background-size: 60%;
+  color: #ff1493;
 }
 
 .minusBtn {
-    font-size: 30px;
-    font-weight: bolder;
-    color: #ff1493;
-    margin-right: 5px;
-    text-align: center;
+  font-size: 30px;
+  font-weight: bolder;
+  color: #ff1493;
+  margin-right: 5px;
+  text-align: center;
 }
 
 .btn_checkout {
-    align-items: center;
-    background-color: #ffdcc2;
-    border: 2px solid #514347;
-    border-radius: 8px;
-    box-sizing: border-box;
-    color: #7c5635;
-    cursor: pointer;
-    display: flex;
-    font-family: Inter, sans-serif;
-    font-size: 16px;
-    height: 48px;
-    justify-content: center;
-    line-height: 24px;
-    max-width: 100%;
-    padding: 0 25px;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
+  align-items: center;
+  background-color: #ffdcc2;
+  border: 2px solid #514347;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #7c5635;
+  cursor: pointer;
+  display: flex;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  height: 48px;
+  justify-content: center;
+  line-height: 24px;
+  max-width: 100%;
+  padding: 0 25px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }
 
 .btn_checkout:after {
-    background-color: #514347;
-    border-radius: 8px;
-    content: "";
-    display: block;
-    height: 48px;
-    left: 0;
-    width: 100%;
-    position: absolute;
-    top: -2px;
-    transform: translate(8px, 8px);
-    transition: transform .2s ease-out;
-    z-index: -1;
+  background-color: #514347;
+  border-radius: 8px;
+  content: "";
+  display: block;
+  height: 48px;
+  left: 0;
+  width: 100%;
+  position: absolute;
+  top: -2px;
+  transform: translate(8px, 8px);
+  transition: transform 0.2s ease-out;
+  z-index: -1;
 }
 
 .btn_checkout:hover:after {
-    transform: translate(0, 0);
+  transform: translate(0, 0);
 }
 
 .btn_checkout:active {
-    background-color: #c8b4b4;
-    outline: 0;
+  background-color: #c8b4b4;
+  outline: 0;
 }
 
 .btn_checkout:hover {
-    outline: 0;
+  outline: 0;
 }
 
 @media (min-width: 768px) {
-    .btn_checkout {
-        padding: 0 40px;
-    }
+  .btn_checkout {
+    padding: 0 40px;
+  }
 }

@@ -42,8 +42,6 @@ input[type="date"] {
 }
 
 button {
-    background-color: #080708;
-    color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 3px;
@@ -73,3 +71,14 @@ a {
 .dark-content {
     color: #ccc;
 }
+
+
+.btn-discount{
+    background-color:  #ffdcc2;
+    color: #7c5635;
+    transition: background-color 0.3s;
+ }
+
+ button:hover {
+    background-color: #dfc3af;
+  }

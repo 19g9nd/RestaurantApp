@@ -18,7 +18,7 @@
         <label asp-for="@Model.ValidTo" min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")">Valid To:</label>
         <input type="date" id="validTo" class="form-control" asp-for="@Model.ValidTo" required>
     </div>
-    <button type="submit" class="btn btn-primary" onclick="return validateDates()">Add Discount Code</button>
+    <button type="submit" class="btn-discount" onclick="return validateDates()">Add Discount Code</button>
 </form>
 <script>
     function validateDates() {

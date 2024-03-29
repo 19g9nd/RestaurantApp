@@ -16,7 +16,9 @@ img {
   margin-bottom: 10px;
   color: #f2dde1;
 }
-
+.quantity-label{
+  color: white;
+}
 .details-container input {
   width: auto;
 }

@@ -2,82 +2,40 @@
 @{
     Layout = null;
 }
-<style>
-    label {
-        display: block;
-        font-weight: bold;
-    }
-
-    input[type="text"],
-    textarea,
-    input[type="number"] {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-        margin-top: 5px;
-        font-size: 16px;
-    }
-
-    textarea {
-        height: 150px;
-        resize: vertical;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .btn-primary:hover {
-        background-color: #0056b3;
-    }
-
-    .editForm {
-        background-color:#514347;
-    }
-    .editLabel {
-        color: white;
-    }
-</style>
+<link href="@Url.Content("~/css/Menu/Edit/light.css")" rel="stylesheet" type="text/css" />
 <h2 class="editLabel">Edit Menu Item</h2>
 
 <form class="editForm" asp-action="Update" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" value="@Model.Id" />
 
     <div class="form-group">
-        <label asp-for="Name"></label>
+        <label class="dark-label" asp-for="Name"></label>
         <input asp-for="Name" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Description"></label>
+        <label class="dark-label" asp-for="Description"></label>
         <textarea asp-for="Description" class="form-control"></textarea>
     </div>
 
     <div class="form-group">
-        <label asp-for="Category"></label>
+        <label class="dark-label" asp-for="Category"></label>
         <input asp-for="Category" class="form-control" />
     </div>
-
+ <div class="checkbox-wrapper-14">
     <div class="form-group">
-        <label asp-for="IsVegetarian"></label>
-        <input asp-for="IsVegetarian" class="form-control" />
+        <label class="dark-label" asp-for="IsVegetarian"></label>
+        <input asp-for="IsVegetarian"  class="switch" class="form-control" />
     </div>
+  </div>
 
     <div class="form-group">
-        <label asp-for="Calories"></label>
+        <label class="dark-label" asp-for="Calories"></label>
         <input asp-for="Calories" class="form-control" />
     </div>
 
     <div class="form-group">
-        <label asp-for="Price"></label>
+        <label class="dark-label" asp-for="Price"></label>
         <input asp-for="Price" class="form-control" />
     </div>
 

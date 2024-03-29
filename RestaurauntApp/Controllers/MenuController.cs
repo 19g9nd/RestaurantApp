@@ -68,7 +68,6 @@ namespace RestaurantApp.Controllers
 
         [HttpGet]
         [Route("GetDetails")]
-        [Authorize]
         public async Task<IActionResult> GetDetails(int id)
         {
             var menuItem = await menuService.GetMenuItem(id);

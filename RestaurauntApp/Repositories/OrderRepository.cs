@@ -278,7 +278,6 @@ namespace RestaurauntApp.Repositories
                     context.OrderItems.RemoveRange(order.OrderItems);
 
                     context.Orders.Remove(order);
-
                     await context.SaveChangesAsync();
                     return true;
                 }
@@ -324,11 +323,11 @@ namespace RestaurauntApp.Repositories
                     discount.Usages.Add(new DiscountUsage { UserName = userName, UsageDate = DateTime.Now });
 
                     await context.SaveChangesAsync();
-                    return true; 
+                    return true;
                 }
                 else
                 {
-                    return false; 
+                    return false;
                 }
             }
             catch (Exception ex)
@@ -337,7 +336,6 @@ namespace RestaurauntApp.Repositories
                 return false;
             }
         }
-
 
         public async Task<OrderItem> RemoveFromOrder(int itemId, string userName)
         {
@@ -352,6 +350,12 @@ namespace RestaurauntApp.Repositories
                 {
                     order.TotalPrice -= (orderItem.Quantity * orderItem.Price);
                     context.OrderItems.Remove(orderItem);
+                    // Проверяем, остались ли еще элементы в заказе
+                    if (order.OrderItems.Count == 0)
+                    {
+                        // Удаляем заказ, если он пустой
+                        context.Orders.Remove(order);
+                    }
                     await context.SaveChangesAsync();
                 }
                 return orderItem;

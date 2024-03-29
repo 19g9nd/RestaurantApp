@@ -27,7 +27,7 @@
 
    @if(Model != null && Model.OrderItems != null && Model.OrderItems.Count > 0){
     <div>
-        <label for="discountCode">Enter Discount Code:</label>
+        <label class="discountLabel" for="discountCode">Enter Discount Code:</label>
         <input type="text" id="discountCode" name="discountCode" class="input">
         <button onclick="applyDiscount()">Apply</button>
     </div>

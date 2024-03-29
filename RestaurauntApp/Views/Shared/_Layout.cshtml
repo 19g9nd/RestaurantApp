@@ -9,8 +9,11 @@
 <link href="~/css/Menu/Create/light.css" rel="stylesheet" type="text/css" data-page="Menu/Create" />
 <link href="~/css/Cart/Checkout/light.css" rel="stylesheet" type="text/css" data-page="Cart/Checkout" />
 <link href="~/css/Home/Contacts/light.css" rel="stylesheet" type="text/css" data-page="Home/Contacts/" />
-<link href="~/css/Menu/GetAll/light.css" rel="stylesheet" type="text/css"  data-page="Menu/GetDetails">
-
+<link href="~/css/Menu/GetAll/light.css" rel="stylesheet" type="text/css" data-page="Menu/GetDetails">
+<link href="~/css/Menu/Edit/light.css" rel="stylesheet" type="text/css" data-page="Menu/Edit" />
+<link href="~/css/Account/Profile/light.css" rel="stylesheet" type="text/css" data-page="Account/Profile" />
+<link href="~/css/Order/GetOrders/light.css" rel="stylesheet" type="text/css" data-page="/Order/GetOrders" />
+<link href="~/css/Account/ChangePassword/light.css" rel="stylesheet" type="text/css"  data-page="/Account/ChangePassword" />
 <!-- Stylesheets -->
 <link href="https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide"
     rel="stylesheet">
@@ -18,11 +21,6 @@
 
 <style>
     @@import url(https://db.onlinewebfonts.com/c/a0faafb86752ddff4c3ec18939c68830?family=Roc+Grotesk+W05+Wide);
-
-    <div class="checkbox-wrapper-58"><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>.checkbox-wrapper-58 input[type="checkbox"] {
-        visibility: hidden;
-        display: none;
-    }
 
     .checkbox-wrapper-58 *,
     .checkbox-wrapper-58 ::after,
@@ -101,7 +99,6 @@
         box-shadow: 0 0.3em 0 var(--outline_color);
     }
 
-    /* Reset default margin and padding */
     body,
     h1,
     h2,
@@ -128,7 +125,6 @@
         color: #333;
         min-height: 100vh;
         margin: 0;
-
         display: grid;
         grid-template-rows: auto 1fr auto;
     }
@@ -147,23 +143,16 @@
         background-color: #080708;
         color: white;
         text-align: center;
-        padding: 1em;
+        padding: 1.5em;
         z-index: 100;
         box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-        min-height: 50px;
-    }
-
-    nav {
-        background-color: #080708;
-        padding: 0.5em;
-        text-align: center;
         min-height: 50px;
     }
 
     nav a {
         color: white;
         text-decoration: none;
-        padding: 0.5em 1em;
+        padding: 0.5em 0.5em;
         border-radius: 5px;
         font-weight: bold;
         text-transform: uppercase;
@@ -180,9 +169,6 @@
 
     .logo-link {
         align-items: center;
-        padding: 0.5em 1em;
-        display: flex;
-        justify-content: flex-start;
     }
 
     .logo-image {
@@ -208,14 +194,9 @@
         min-height: 90vh;
     }
 
-    main {
-        flex-grow: 1;
-        /* Allow the main content to grow and push the footer to the bottom */
-    }
 
     @@media (max-width: 768px) {
 
-        /* Adjust font sizes for smaller screens */
         body {
             font-size: 12px;
         }
@@ -248,13 +229,24 @@
             margin: 5px 0;
         }
     }
+
+    .header-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .logo-link,
+    nav a {
+        margin: 5px 0;
+    }
 </style>
 
 <body>
     <div class="page-container">
         <header class="sticky-header">
             <nav>
-                <div>
+                <div class="header-content">
                     <a asp-area="" asp-controller="Home" asp-action="Index" class="logo-link">
                         <img src="@Url.Content("~/Assets/icon.png")" alt="Pizza Haven Logo" width="50" height="50"
                             class="logo-image">
@@ -273,13 +265,18 @@
                         <a asp-area="" asp-controller="Account" asp-action="Login">Login</a>
                     }
                     @if (this.User?.Identity?.IsAuthenticated == true)
+
                     {
                         <a asp-area="" asp-controller="Cart" asp-action="Cart">Cart</a>
                         <a asp-area="" asp-controller="Order" asp-action="GetOrders">Orders</a>
                         <a asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
-                        <a asp-area="" asp-controller="Account" asp-action="LogOut">Logout</a>
+
                     }
                     <a asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
+                    @if (this.User?.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-area="" asp-controller="Account" asp-action="LogOut">Logout</a>
+                    }
                     <div class="checkbox-wrapper-58">
                         <label class="switch">
                             <input id="check-5" type="checkbox" onclick="toggleTheme()">
@@ -289,6 +286,7 @@
                 </div>
             </nav>
         </header>
+
 
         <main role="main" class="pb-3">
             @RenderBody()
