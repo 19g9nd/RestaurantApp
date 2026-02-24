@@ -1,29 +1,23 @@
-# Stage 1: Build
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
-# Copy solution and project files
+# Copy solution and csproj
 COPY *.sln .
 COPY RestaurauntApp/*.csproj ./RestaurauntApp/
 
-# Restore dependencies
-RUN dotnet restore
+# Restore packages
+RUN dotnet restore RestaurauntApp.sln
 
-# Copy all source code
-COPY . .
+# Copy everything else
+COPY RestaurauntApp/. ./RestaurauntApp/
 
-# Publish the app
+# Build
 WORKDIR /source/RestaurauntApp
-RUN dotnet publish -c Release -o /app
+RUN dotnet publish -c Release -o /app/publish
 
-# Stage 2: Runtime
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app .
-
-# Configure Kestrel to listen on port 10000
-ENV ASPNETCORE_URLS=http://0.0.0.0:10000
-EXPOSE 10000
-
-# Start the app
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "RestaurauntApp.dll"]
