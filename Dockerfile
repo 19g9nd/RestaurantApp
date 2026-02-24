@@ -2,18 +2,14 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /source
 
-# Copy solution and csproj
-COPY *.sln .
-COPY RestaurauntApp/*.csproj ./RestaurauntApp/
-
-# Restore packages
-RUN dotnet restore RestaurauntApp.sln
-
-# Copy everything else
+# Copy everything from the RestaurauntApp folder
 COPY RestaurauntApp/. ./RestaurauntApp/
 
-# Build
+# Restore packages
 WORKDIR /source/RestaurauntApp
+RUN dotnet restore RestaurauntApp.sln
+
+# Build & publish
 RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
