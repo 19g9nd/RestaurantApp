@@ -1,5 +1,5 @@
 using System;
-using System.Data.SqlClient;
+using Npgsql;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +35,6 @@ namespace RestaurauntApp.Middlewares
                 }
 
                 var requestContent = await CaptureRequestBodyAsync(context.Request);
-
                 var fullUrl = $"{context.Request.Scheme}://{context.Request.Host}{context.Request.Path}";
 
                 using (var responseBodyStream = new MemoryStream())
@@ -68,7 +67,7 @@ namespace RestaurauntApp.Middlewares
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred in LoggerMD middleware");
-                throw; 
+                throw;
             }
         }
 
@@ -79,7 +78,7 @@ namespace RestaurauntApp.Middlewares
                 request.EnableBuffering();
                 var buffer = new byte[Convert.ToInt32(request.ContentLength)];
                 await request.Body.ReadAsync(buffer, 0, buffer.Length);
-                request.Body.Position = 0;  // Rewind the stream to 0
+                request.Body.Position = 0;
                 return Encoding.UTF8.GetString(buffer);
             }
             return null;
@@ -92,13 +91,14 @@ namespace RestaurauntApp.Middlewares
 
         private async Task InsertLogEntryAsync(LogEntry logEntry)
         {
-            using (var connection = new SqlConnection(connectionString))
+            using (var connection = new NpgsqlConnection(connectionString))  // <-- changed
             {
-                await connection.ExecuteAsync(@"INSERT INTO LogEntries 
-                                        (UserId, Url, Method, StatusCode, RequestBody, ResponseBody, CreationDate) 
-                                        VALUES 
-                                        (@UserId, @Url, @Method, @StatusCode, @RequestBody, @ResponseBody, @CreationDate)",
-                                                param: logEntry);
+                await connection.ExecuteAsync(
+                    @"INSERT INTO ""LogEntries"" 
+                      (""UserId"", ""Url"", ""Method"", ""StatusCode"", ""RequestBody"", ""ResponseBody"", ""CreationDate"") 
+                      VALUES 
+                      (@UserId, @Url, @Method, @StatusCode, @RequestBody, @ResponseBody, @CreationDate)",
+                    param: logEntry);
             }
         }
     }

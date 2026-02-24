@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using RestaurauntApp.Data;
 using RestaurauntApp.Middlewares;
 using RestaurauntApp.Repositories;
 using RestaurauntApp.Repositories.Base;
 using RestaurauntApp.Services;
 using RestaurauntApp.Services.Base;
+using Npgsql.EntityFrameworkCore.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MenuDb");
@@ -15,7 +16,7 @@ builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddDbContext<RestaurantAppDbContext>(options =>
-    options.UseSqlServer(connectionString)
+    options.UseNpgsql(connectionString)
 );
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
